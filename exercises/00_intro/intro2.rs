@@ -1,28 +1,17 @@
 fn main() {
     // TODO: Fix the code to print "Hello world!".
     //println!("Hello world!");
-   
-   let mut counter = 0;
-
-   let result = loop {
-        counter += 1;
-
-        let result2 = 'loop2: loop{
-            if counter  == 2{
-                break 'loop2 counter ;
-            }
-
-            counter += 1; 
-        };
-
-        println!("Inner loop returned: {}", result2);
+    let tab = [3,4,33,33,22,55];
+    let mut index = 0;
 
 
-        if counter == 5{
-            break counter + 10;
-        }
-   };
+    while index < tab.len() {
+        println!("index : {0}, value : {1}", index, tab[index]);
 
-   println!("result is {result}");
+        index += 1;
+    }
+ 
+    
+
 
 }
