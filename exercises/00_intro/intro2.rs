@@ -1,10 +1,26 @@
+use std::io;
+
 fn main() {
     // TODO: Fix the code to print "Hello world!".
-    println!("Hello world!");
+    //println!("Hello world!");
+    let collection = [1,2,3,4,5,];
 
-    let services: (&'static str ,&'static str ,&'static str ,&'static str ) = ("invest","invest consulting","blockchain consulting","ai consulting");
-    let (serv1,_serv2,serv3,_serv4) = services;
+    println!("Please, enter an index.");
 
-    println!("{} {} {} {}", serv1, services.1, serv3, services.3);
+    let mut index = String::new();
+
+    io::stdin()
+        .read_line(&mut index)
+        .expect("wrong type index typed");
+
+    let index: usize = index
+    .trim()
+    .parse()
+    .expect("Wrong index");
+
+    let element = collection[index];
+
+    println!("index {index}, valeur : {element}");
+
 
 }
