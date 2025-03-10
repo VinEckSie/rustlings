@@ -1,26 +1,22 @@
-use std::io;
 
 fn main() {
     // TODO: Fix the code to print "Hello world!".
     //println!("Hello world!");
-    let collection = [1,2,3,4,5,];
+    let sentence = String::from("Hello World");
 
-    println!("Please, enter an index.");
+    let first_word = first_word(&sentence);
 
-    let mut index = String::new();
+    println!("First word of sentence '{}' is '{}'", sentence, first_word);
+}
 
-    io::stdin()
-        .read_line(&mut index)
-        .expect("wrong type index typed");
+fn first_word(s: &String) -> &str {
+    let bytes = s.as_bytes();
 
-    let index: usize = index
-    .trim()
-    .parse()
-    .expect("Wrong index");
+    for(i,&item) in bytes.iter().enumerate(){
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
 
-    let element = collection[index];
-
-    println!("index {index}, valeur : {element}");
-
-
+    &s[..]
 }
