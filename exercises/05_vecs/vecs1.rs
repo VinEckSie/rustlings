@@ -3,13 +3,16 @@ fn array_and_vec() -> ([i32; 4], Vec<i32>) {
 
     // TODO: Create a vector called `v` which contains the exact same elements as in the array `a`.
     // Use the vector macro.
-    // let v = ???;
+    let v = a.to_vec();
 
     (a, v)
 }
 
 fn main() {
     // You can optionally experiment here.
+    let (a, v) = array_and_vec();
+    assert_eq!(a, *v);
+    println!("{:?}",v);
 }
 
 #[cfg(test)]
