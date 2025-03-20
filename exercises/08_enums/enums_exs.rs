@@ -19,7 +19,53 @@ fn main() {
     println!("{:?}",Message::from_command("Write", None, Some(String::from("processing"))));
     println!("{:?}",Message::from_command("ChangeColor", Some((255,120,122)), None));
 
+    let some_number = Some(43);
+    let some_char = Some('r');
+    let absent_number: Option<u16> = None;
+
+    //this willl not compile, because they are considered as different types
+    // let num1: i8 = 5;
+    // let num2: Option<i8> = Some(5);
+    // let result = num1 + num2;
+
+    //NOTE: everywhere you except a null value is possible >>> USE OPTION<>
+
+    //regular version
+    let one_coin = Coin::Penny;
+    let coin_value = sort_that_coin(one_coin);
+    println!("{:?}",coin_value);
+
+    //shortened version
+    println!("{:?}",sort_that_coin(Coin::Quarter(String::from("California"))));
+    println!("{:?}",sort_that_coin(Coin::Quarter(String::from("Alabama"))));
+
+    let new_value: Option<u8> = increase_coin_value(coin_value);
+    println!("{:?}",new_value);
+
+    //USE LET when you want to manage one pattern and not all the others
+    
+    //✅ Use let ... else when:
+        // You need to destructure a value and handle failure immediately.
+        // You want to avoid extra indentation (compared to match or if let).
+        // You need a clean, readable way to exit early.
+
+    // ❌ Don’t use let ... else when:
+        // You need multiple conditions (Use match).
+        // You need to modify the extracted value before using it (Use match).
+    
+    //panic if one_coin is Eighty
+    let Some(value) = new_value else {
+        panic!("Error");
+    };
+
+    println!("Let ok, value {}", value);
 }
+
+// #[derive(Debug)]
+// struct IpAddr {
+//     address: String,
+//     addr_type: IpAddrType,
+// }
 
 #[derive(Debug)]
 enum IpAddrType {
@@ -71,8 +117,36 @@ impl Message {
     }
 }
 
-// #[derive(Debug)]
-// struct IpAddr {
-//     address: String,
-//     addr_type: IpAddrType,
-// }
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter(String),
+    Fifty,
+    Eighty,
+}
+
+fn sort_that_coin(coin: Coin) -> Option<u8> {
+    match coin {
+        Coin::Penny => {
+           println!("Lucky Penny"); 
+            Some(1)
+        }
+        Coin::Nickel => Some(5),
+        Coin::Dime => Some(10),
+        Coin::Quarter(state) => {
+            println!("State from this coin is {}",state);
+            Some(25)
+        }
+        _ => None,
+        //_ => (), if it was not a function
+    }
+}
+
+fn increase_coin_value(value: Option<u8>) -> Option<u8> {
+    match value {
+        Some(coin) => Some(coin + 5),
+        None => None,
+    }
+}
+
