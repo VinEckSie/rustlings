@@ -43,7 +43,7 @@ fn main() {
     println!("{:?}",new_value);
 
     //USE LET when you want to manage one pattern and not all the others
-    
+
     //✅ Use let ... else when:
         // You need to destructure a value and handle failure immediately.
         // You want to avoid extra indentation (compared to match or if let).
@@ -59,6 +59,41 @@ fn main() {
     };
 
     println!("Let ok, value {}", value);
+
+    //Variable scope
+    let x = Some(5);
+    let y = 10;
+
+    match x {
+        Some(50) => println!("Got 50"),
+        Some(y) => println!("Matched, y = {y}"),
+        _ => println!("Default case, x = {x:?}"),
+    }
+
+    println!("at the end: x = {x:?}, y = {y}");
+
+
+    //Or Operator (better for few values) and range (works only on chars and numerics)
+    let letter = 'l';
+
+    match letter {
+        'a'..='k' => println!("first part of alphabet"),
+        'l' | 'm' => println!("l ou m"),
+        'n'..='z' => println!("second part of alphabet"),
+        _ => println!("This is not a letter"),
+    }
+
+    //Destructuring
+        //Structs
+        struct Point {
+            x: u8,
+            y: u8,
+        }
+
+        let p = Point { x: 5, y: 10};
+        let Point { x, y} = p;
+
+        println!("Destructuring structs: {:?} {:?}",x,y); 
 }
 
 // #[derive(Debug)]
@@ -137,6 +172,10 @@ fn sort_that_coin(coin: Coin) -> Option<u8> {
         Coin::Quarter(state) => {
             println!("State from this coin is {}",state);
             Some(25)
+        }
+        Coin::Fifty | Coin::Eighty => {
+            println!("This coin do not exist");
+            None
         }
         _ => None,
         //_ => (), if it was not a function
