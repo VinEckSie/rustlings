@@ -94,6 +94,23 @@ fn main() {
         let Point { x, y} = p;
 
         println!("Destructuring structs: {:?} {:?}",x,y); 
+
+
+        match p {
+            Point { x, y: 12} => println!("y axis"),
+            Point { x: 3, y} => println!("x axis"),
+            other => println!("On neither axis {x} {y}"),
+        }
+
+        //Enums
+        let message = Message::Move { x:23, y:34};
+
+        match message {
+            Message::Quit => println!("Quit"),
+            Message::Move { x:_, y:_ } => println!("Move"),
+            Message::Write(_) => println!("Write"),
+            Message::ChangeColor (_,_,_) => println!("ChangeColor"),
+        }
 }
 
 // #[derive(Debug)]
