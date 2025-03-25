@@ -27,7 +27,6 @@ fn main() {
     // let num1: i8 = 5;
     // let num2: Option<i8> = Some(5);
     // let result = num1 + num2;
-
     //NOTE: everywhere you except a null value is possible >>> USE OPTION<>
 
     //regular version
