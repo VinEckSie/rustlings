@@ -1,18 +1,19 @@
 use std::net::Ipv6Addr;
 
 fn main() {
+    println!("\nEnums: ");
     let four_addr = IpAddrType::V4(127,0,0,1);
     let six_addr = IpAddrType::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1));
-    
 
-    println!("{:?}",four_addr);
-    println!("{:?}",six_addr);
+
+    println!("{four_addr:?}");
+    println!("{six_addr:?}");
 
 
     println!("{:?}",Message::new_quit());
     println!("{:?}",Message::new_move(4,4));
     println!("{:?}",Message::new_Write(String::from("loading")));
-    println!("{:?}",Message::new_changecolor(3,3,4));
+    println!("{:?}",Message::new_changecolor_hsv(30,50,30));
 
     println!("{:?}",Message::from_command("Quit", None, None));
     println!("{:?}",Message::from_command("Move", Some((34,34,0)), None));
@@ -27,39 +28,43 @@ fn main() {
     // let num1: i8 = 5;
     // let num2: Option<i8> = Some(5);
     // let result = num1 + num2;
-    //NOTE: everywhere you except a null value is possible >>> USE OPTION<>
+
+    //NOTE: everywhere you expect that a null value is possible >>> USE OPTION<>
 
     //regular version
+    println!("\nEnums advanced: ");
     let one_coin = Coin::Penny;
     let coin_value = sort_that_coin(one_coin);
-    println!("{:?}",coin_value);
+    println!("{coin_value:?}");
 
     //shortened version
     println!("{:?}",sort_that_coin(Coin::Quarter(String::from("California"))));
     println!("{:?}",sort_that_coin(Coin::Quarter(String::from("Alabama"))));
 
     let new_value: Option<u8> = increase_coin_value(coin_value);
-    println!("{:?}",new_value);
+    println!("{new_value:?}");
 
     //USE LET when you want to manage one pattern and not all the others
 
     //✅ Use let ... else when:
-        // You need to destructure a value and handle failure immediately.
-        // You want to avoid extra indentation (compared to match or if let).
-        // You need a clean, readable way to exit early.
+    // You need to destructure a value and handle failure immediately.
+    // You want to avoid extra indentation (compared to match or if let).
+    // You need a clean, readable way to exit early.
 
     // ❌ Don’t use let ... else when:
-        // You need multiple conditions (Use match).
-        // You need to modify the extracted value before using it (Use match).
-    
+    // You need multiple conditions (Use match).
+    // You need to modify the extracted value before using it (Use match).
+
     //panic if one_coin is Eighty
+    println!("\nLet else: ");
     let Some(value) = new_value else {
         panic!("Error");
     };
 
-    println!("Let ok, value {}", value);
+    println!("Let ok, value {value}");
 
     //Variable scope
+    println!("\nVariable scope: ");
     let x = Some(5);
     let y = 10;
 
@@ -71,8 +76,8 @@ fn main() {
 
     println!("at the end: x = {x:?}, y = {y}");
 
-
-    //Or Operator (better for few values) and range (works only on chars and numerics)
+    //
+    println!("\nOr Operator (better for few values) and range (better for a lot of values but works only on chars and numerics): ");
     let letter = 'l';
 
     match letter {
@@ -82,34 +87,85 @@ fn main() {
         _ => println!("This is not a letter"),
     }
 
-    //Destructuring
-        //Structs
-        struct Point {
-            x: u8,
-            y: u8,
-        }
+    //Structs destructuring
+    println!("\nStruct destructuring: ");
+    struct Point {
+        x: u8,
+        y: i8,
+    }
 
-        let p = Point { x: 5, y: 10};
-        let Point { x, y} = p;
+    let p = Point { x: 5, y: 10};
+    let Point { x, y} = p;
 
-        println!("Destructuring structs: {:?} {:?}",x,y); 
+    println!("{x:?} {y:?}");
 
 
-        match p {
-            Point { x, y: 12} => println!("y axis"),
-            Point { x: 3, y} => println!("x axis"),
-            other => println!("On neither axis {x} {y}"),
-        }
+    match p {
+        Point { x, y: 12} => println!("y axis"),
+        Point { x: 3, y} => println!("x axis"),
+        other => println!("On neither axis {x} {y}"),
+    }
 
-        //Enums
-        let message = Message::Move { x:23, y:34};
 
-        match message {
-            Message::Quit => println!("Quit"),
-            Message::Move { x:_, y:_ } => println!("Move"),
-            Message::Write(_) => println!("Write"),
-            Message::ChangeColor (_,_,_) => println!("ChangeColor"),
-        }
+    println!("\nEnum destructuring: ");
+    let message = Message::Move { x:23, y:34};
+
+    match message {
+        Message::Quit => println!("Quit"),
+        Message::Move { x:_, y:_ } => println!("Move"),
+        Message::Write(_) =>  println!("Write"),
+        //.. bc quicker than having to list r: _, g: _, etc.
+        Message::ChangeColor(Color::Rgb(..) | Color::Hsv(..))  => println!("ChangeColor"),
+    }
+
+    println!("\nTuple and structs destructuring: ");
+    let ((altitude, latitude), Point {x, y  }) = ((143,165), Point { x:55, y:75});
+    println!("Altitude: {altitude:?}, Latitude: {latitude:?}, x: {x:?}, y: {y:?}");
+
+
+    println!("\nIgnoring some variables (useful to keep in signature with traits): ");
+    get_x_coordonate(34,44);
+
+    let y: Option<u8> = None;
+
+    match y {
+        Some(_) => println!("y is not null"),
+        _ => println!("Partial coordonates"),
+    }
+
+    println!("\nIgnoring remaining parts: ");
+    let number_list = (1,2,3,4,5,6,7,8,9);
+
+    match number_list {
+        (first, .., last) => println!("First: {first}, Last: {last}"),
+    }
+
+    println!("\nMatch guard: ");
+    let x = Some(20);
+    let y = Some(20);
+
+    match x {
+        Some(num) if (0..=30).contains(&num) && num % 2 == 0 && Some(num) == y => println!("Even between 0 and 30 and equal to y: {num}"),
+        Some(num) if num % 2 == 0 && Some(num) == y => println!("Even equal to y: {num}"),
+        Some(num) if num % 2 == 0 && Some(num) != y => println!("Even different to y: {num}, {y:?}"),
+        Some(num) => println!("Odd {num}"),
+        None => (),
+    }
+
+    println!("\nBindings: ");
+    let coords = Point { x: 10, y: 16};
+
+    match coords {
+        Point {
+            x: _,
+            y: yvar @ 0..=20,
+        } => println!("y between 0 and 20: {yvar}"),
+        Point {
+            x: _,
+            y: 20..,
+        } => println!("y over 20"),
+        Point {..} =>  println!("y negative"),
+    }
 }
 
 // #[derive(Debug)]
@@ -125,19 +181,27 @@ enum IpAddrType {
 }
 
 #[derive(Debug)]
+enum Color {
+    Rgb(u8,u8,u8),
+    Hsv(u8,u8,u8),
+}
+
+#[derive(Debug)]
 enum Message {
     Quit,
-    Move {x: i32, y: i32},
+    Move {x: u8, y: u8},
     Write(String),
-    ChangeColor(i32,i32,i32),
+    ChangeColor(Color),
 }
+
+
 
 impl Message {
     fn new_quit() -> Self {
         Message::Quit
     }
 
-    fn new_move(x: i32, y: i32) -> Self {
+    fn new_move(x: u8, y: u8) -> Self {
         Message::Move {x,y}
     }
 
@@ -145,11 +209,15 @@ impl Message {
         Message::Write(String::from(text))
     }
 
-    fn new_changecolor(r: i32, g: i32, b: i32) -> Self {
-        Message::ChangeColor(r,g,b)
+    fn new_changecolor_rgb(r: u8, g: u8, b: u8) -> Self {
+        Message::ChangeColor(Color::Rgb(r,g,b))
     }
 
-    fn from_command(command: &str, args: Option<(i32,i32,i32)>, text: Option<String>) -> Self {
+    fn new_changecolor_hsv(h: u8, s: u8, v: u8) -> Self {
+        Message::ChangeColor(Color::Hsv(h,s,v))
+    }
+
+    fn from_command(command: &str, args: Option<(u8,u8,u8)>, text: Option<String>) -> Self {
         match command {
             "Quit" => Message::Quit,
             "Move" => if let Some((x,y,_)) = args {
@@ -159,9 +227,9 @@ impl Message {
             }
             "Write" => Message::Write(text.unwrap_or("Default".to_string())),
             "ChangeColor" => if let Some((r,g,b)) = args {
-                Message::ChangeColor(r,g,b,)
+                Message::ChangeColor(Color::Rgb(r,g,b))
             } else {
-                Message::ChangeColor(255,255,255)
+                Message::ChangeColor(Color::Rgb(255,255,255))
             }
             _ => Message::Quit,
         }
@@ -180,13 +248,13 @@ enum Coin {
 fn sort_that_coin(coin: Coin) -> Option<u8> {
     match coin {
         Coin::Penny => {
-           println!("Lucky Penny"); 
+            println!("Lucky Penny");
             Some(1)
         }
         Coin::Nickel => Some(5),
         Coin::Dime => Some(10),
         Coin::Quarter(state) => {
-            println!("State from this coin is {}",state);
+            println!("State from this coin is {state}");
             Some(25)
         }
         Coin::Fifty | Coin::Eighty => {
@@ -203,5 +271,9 @@ fn increase_coin_value(value: Option<u8>) -> Option<u8> {
         Some(coin) => Some(coin + 5),
         None => None,
     }
+}
+
+fn get_x_coordonate(x: u8, _: u8) {
+    println!("X coordonate: {x:?}");
 }
 
