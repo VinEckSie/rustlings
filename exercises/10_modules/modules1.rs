@@ -1,3 +1,5 @@
+mod ex_modules;
+
 // TODO: Fix the compiler error about calling a private function.
 mod sausage_factory {
     // Don't let anybody outside of this module see this!
