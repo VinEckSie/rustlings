@@ -23,7 +23,7 @@ fn main() {
 
     string_slice("nice weather".into());
 
-    string_slice(format!("Interpolation {}", "Station"));
+    string(format!("Interpolation {}", "Station"));
 
     // WARNING: This is byte indexing, not character indexing.
     // Character indexing can be done using `s.chars().nth(INDEX)`.
