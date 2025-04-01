@@ -94,6 +94,7 @@ bin = [
   { name = "hashmaps2_sol", path = "solutions/11_hashmaps/hashmaps2.rs" },
   { name = "hashmaps3", path = "exercises/11_hashmaps/hashmaps3.rs" },
   { name = "hashmaps3_sol", path = "solutions/11_hashmaps/hashmaps3.rs" },
+  { name = "ex_hahsmaps", path = "exercises/11_hashmaps/ex_hashmaps.rs" },
   { name = "quiz2", path = "exercises/quizzes/quiz2.rs" },
   { name = "quiz2_sol", path = "solutions/quizzes/quiz2.rs" },
   { name = "options1", path = "exercises/12_options/options1.rs" },
