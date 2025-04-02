@@ -18,5 +18,7 @@ fn check_option(optional: Option<Box<i32>>) {
 
     println!("Size of &u8: {}", size_of::<&u8>());
     println!("Size of Option<&u8>: {}", size_of::<Option<&u8>>());
+    
+    //Nullable pointer
 
 }
