@@ -1,6 +1,4 @@
-use std::ops::Deref;
-use std::option::Option; // this is optional, but for clarity
-
+use std::sync::RwLockReadGuard;
 
 fn main() {
     //Nullable pointer
@@ -10,26 +8,22 @@ fn main() {
     let value = Some(Box::new(20));
     check_option(value);
 
-    //? operator (shorter way as match pattern)
-    // let question_value = Some(String::from("question mark test"));
     let question_value = None;
     println!("\n? Operator: ");
     println!("Value is {:?}", get_value(question_value));
 
 
     println!("\n? Adapters to work with references: ");
-    println!("as_ref: "); //as_ref() is used to avoid moving the Option<String>, so we can still use user later.
+    println!("as_ref: "); //used to avoid moving the Option<String>, so we can still use user later.
     let mut user_id: Option<String> = Some("89859574973".to_string());
     //as_ref
     match user_id.as_ref() {
         Some(user_id) => println!("User ID is {:?}", user_id),
         None => println!("User ID none"),
     }
-    // name is still usable because we didn't take ownership
-    println!("User ID Confirmation: {:?}", user_id);
+    println!("User ID Confirmation: {:?}", user_id); // name is still usable because we didn't take ownership
 
-
-    println!("as_mut: "); // as_mut() lets you change the value inside the Option directly.
+    println!("as_mut: "); //lets you change the value inside the Option directly.
     match user_id.as_mut() {
         Some(user_id) => {
             *user_id = "new8787878787".to_string();
@@ -39,70 +33,76 @@ fn main() {
     }
     println!("User ID Confirmation: {:?}", user_id);
 
+    println!("as_deref: "); // rust issue stand by
 
-    println!("as_deref: ");// as_deref() You don’t want to clone or own the string. as_deref() gives you an Option<&str> to work with.
-    // let user_mail: Option<Box<String>> = Some(Box::new("vinsie@gmail.com".to_string()));
-    // 
-    // match user_mail.as_deref() {
-    //     Some("vinsie@gmail.com") => println!("This is a vinsie!"),
-    //     Some(other) => println!("This is not a vinsie!: {}", other),
-    //     None => println!("No user email"),
-    // }
+    println!("as_deref_mut: "); // editing values inside smart pointers like String, Box<T>, etc.
+    let mut boxed_name = Box::new(Some("locust".to_string()));
+    clear_user_id(&mut boxed_name);
 
-    // fn main() {
-    //     let user_mail: Option<Box<String>> = Some(Box::new("vinsie@gmail.com".to_string()));
-    // 
-    //     match user_mail.as_deref() {
-    //         Some("vinsie@gmail.com") => println!("This is a vinsie!"),
-    //         Some(other) => println!("This is not a vinsie!: {}", other),
-    //         None => println!("No user email"),
-    //     }
-    // }
-
-//OK
-        // let user_mail: Option<Box<String>> = Some(Box::new("vinsie@gmail.com".to_string()));
-        // 
-        // match user_mail {
-        //     Some(ref boxed_string) if boxed_string.as_str() == "vinsie@gmail.com" => {
-        //         println!("This is a vinsie!")
-        //     }
-        //     Some(ref other) => {
-        //         println!("This is not a vinsie!: {}", other)
-        //     }
-        //     None => println!("No user email"),
-        // }
-
-fn main() {
-    let user_mail: Option<Box<String>> = Some(Box::new("vinsie@gmail.com".to_string()));
-
-    let string_ref: Option<&str> = user_mail.as_deref(); // ✅ this compiles
-
-    match string_ref {
-        Some("vinsie@gmail.com") => println!("This is a vinsie!"),
-        Some(other) => println!("This is not a vinsie!: {}", other),
-        None => println!("No user email"),
-    }
-}
-
-
+    //as pin ref() used inside custom future/stream types or low-level async code. Not needed in everyday Rust.
+    //as pin mut() Used when building custom futures, generators, or safely mutating data that must not move
     
+    println!("Extracting contained value: ");
+    // expect("msg")	    ✅ Panic	custom error "msg"	Must-have value, want clear error
+    let my_id_custom: Option<i32> = Some(-76767676);
+    //let my_id_custom: Option<i32> = None;
+
+    // my_id_custom.expect("wallet_id not found");
+    // unwrap()	            ✅ Panic	generic error message	Quick debug code / tests only | Avoid in Production
+    //my_id_custom.unwrap();
+    // unwrap_or(x)	        ❌ No panic	Very common in apps, CLI, configs.
+    //my_id_custom.unwrap_or(00000000);
+    // unwrap_or_default()	❌ No panic	Great for configs, deserialization, init logic.
+    //my_id_custom.unwrap_or_default();
+    // unwrap_or_else(f)	❌ No panic	Most useful in performance-sensitive or async cases | Expensive or lazy fallback
+    // my_id_custom.unwrap_or_else(|| wallet_default_error());
+    println!("my_id_custom: {:?}", my_id_custom);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    println!("\n? Transforming contained values: ");
+    println!("Transform Option to Result: ");
+    // Use .ok_or(...) when you want to convert to Result with a simple error
+    let mut id_result: Result<_, &str> = my_id_custom.ok_or("Error: No id result");
+    // Use .ok_or_else(...) when the error needs logic or is expensive
+    id_result = my_id_custom.ok_or_else(|| result_default_error());
+    // Use .transpose() when you have an Option<Result> and want clean error handling
+    let maybe_id: Option<Result<_,_>> = Some(id_result);
+    let id_verified: Result<_,_> = maybe_id.transpose();
+    println!("id_result: {:?}", id_result);
+    println!("id_verified: {:?}", id_verified);
+    
+    println!("Transform Some variant: ");
+    println!("Filter: keep Some(t) only if it passes a test: ");
+    let my_megative_id = my_id_custom.filter(|var| var.is_negative()); 
+    
+    if let Some(my_megative_id) = my_megative_id {
+        println!("id is negative: {:?}", my_megative_id);
+    }
+    
+    println!("Flatten: chaining optional logic that might return another Option:");
+    println!("Flatten, parsing value: ");
+    let account_id = Some("588");
+    let parsed =  account_id.map(|acc| acc.parse::<u32>().ok()).flatten();
+    println!("account_id parsed: {:?}", parsed);
+    println!("Flatten, error handling: ");
+    let account_error: Result<Result<i32, &str>, &str> = Ok(Ok(642));
+    let account_error_flat = account_error.iter().flatten();
+    println!("Flatten, flat error: {:?}", account_error_flat);
+    println!("Flatten, working with iterators: ");
+    let my_vec = vec![Some("588"), None, Some("554")];
+    println!("my_vec_processed: {:?}", my_vec
+            .iter()
+            .flatten()
+            .collect::<Vec<_>>());
+    
+        
+    println!("Return a value (not an option) : transform Option<T> to a value: ");
+    //map or Use case: You want to always get a value, even if it's None.
+    //map or else Use case: Computing the fallback is expensive or contextual.
+    
+    println!("Combine two options: ");
+    //zip Use case: Combine two options into a tuple only if both exist.
+    //zip with Use case: Combine two Options with logic (e.g., add, concat, etc.)
 }
 
 //Nullable pointer
@@ -115,16 +115,9 @@ fn check_option(optional: Option<Box<i32>>) {
 
 //? operator (shorter way as match pattern)
 // Use ? when…	
-// You just want to propagate None upwards	
-// You’re in a function that returns Option	
-// You want cleaner, linear code	
-// You want fewer nested blocks	
-// 
+// You just want to propagate None upwards | You’re in a function that returns Option | You want cleaner, linear code | You want fewer nested blocks
 // Use match when…
-// You want to handle None differently
-// You're doing something more complex
-// You’re matching on multiple values at once
-// You need different logic per match arm
+// You want to handle None differently | You're doing something more complex | You’re matching on multiple values at once | You need different logic per match arm
 fn get_value(optional: Option<String>)  -> Option<String> {
     Some(optional)?
 }
@@ -139,40 +132,23 @@ fn get_value(optional: Option<String>)  -> Option<String> {
 
 
 //Adapters to work with references
+// as_deref_mut
+fn clear_user_id(user_id: &mut Box<Option<String>>) {
+    if let Some(id) = user_id.as_deref_mut() {
+        println!("Clearing user {:?}", id.to_uppercase());
+    }
+}
 
+//unwrap_or_else()
+fn wallet_default_error() -> i32 {
+    println!("wallet_default_error");
+    9999
+}
 
-// as_deref_mut 🔍 This is useful for editing values inside smart pointers like String, Box<T>, etc.
-//as pin ref Needed when working with async code or other pinned types where moving is forbidden.
-//as pin mut 🔍 Used when building custom futures, generators, or safely mutating data that must not move
-
-
-//Extracting contained value
-// Method	            Panics?	    Use When...
-// expect("msg")	    ✅ Yes	T	Panics with your custom "msg"	Must-have value, want clear error
-// unwrap()	            ✅ Yes	T	Panics with generic message	Quick debug code / tests only
-// unwrap_or(x)	        ❌ No	T	Returns x	Simple default
-// unwrap_or_default()	❌ No	T	Returns T::default()	Type’s default is fine
-// unwrap_or_else(f)	❌ No	T	Calls f() and returns result	Expensive or lazy fallback
-
-
-//Transforming contained values
-    //Transform Option to Result
-    // Use .ok_or(...) when you want to convert to Result with a simple error
-    // Use .ok_or_else(...) when the error needs logic or is expensive
-    // Use .transpose() when you have an Option<Result> and want clean error handling
-
-    //Transform Some variant
-    //filter Use case: keep Some(t) only if it passes a test.
-    //flatten  Use case: chaining optional logic that might return another Option.
-    //map  Use case: Transform the inner value.
-
-    //Return a value (not an option) : transform Option<T> to a value of a possibly different type U
-    //map or Use case: You want to always get a value, even if it's None.
-    //map or else Use case: Computing the fallback is expensive or contextual.
-
-    //Combine two options
-    //zip Use case: Combine two options into a tuple only if both exist.
-    //zip with Use case: Combine two Options with logic (e.g., add, concat, etc.)
+//ok_or_else
+fn result_default_error() -> &'static str {
+    "wallet_default_error"
+}
 
 
 //bool operator
