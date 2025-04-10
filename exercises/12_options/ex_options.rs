@@ -1,4 +1,3 @@
-use std::sync::RwLockReadGuard;
 
 fn main() {
     println!("\n\nNullable pointer: ");
@@ -32,9 +31,9 @@ fn main() {
         },
         None => println!("User ID none"),
     }
-    println!("User ID Confirmation: {:?}", user_id);
+    println!("User ID Confirmation: {:?}", user_id); // name is still usable because we didn't take ownership
 
-    println!("\nas_deref: "); // rust issue stand by #87121
+    println!("\nas_deref: "); // rust issue #87121, work around: 
     let user_mail: Option<Box<String>> = Some(Box::new("mail@example.com".to_string()));
     let string_slice = user_mail.as_deref();
 
@@ -53,6 +52,7 @@ fn main() {
 
 
     println!("\n\nExtracting contained value: ");
+    println!("Use .expect() when you're absolutely sure the value is present and you want a meaningful panic. But in most real-world situations, prefer .unwrap_or(...), .unwrap_or_else(...), or pattern matching (if let).");
     println!("\nexpect: "); //✅ Panic	custom error "msg"	Must-have value, want clear error
     let my_id_custom: Option<i32> = Some(-76767676);
     //let my_id_custom: Option<i32> = None;
@@ -91,9 +91,9 @@ fn main() {
     
     println!("\nTransform Some variant: ");
     println!("Filter: keep Some(t) only if it passes a test: ");
-    let my_megative_id = my_id_custom.filter(|var| var.is_negative());
-    if let Some(my_megative_id) = my_megative_id {
-        println!("id is negative: {:?}", my_megative_id);
+    let my_negative_id = my_id_custom.filter(|var| var.is_negative());
+    if let Some(my_negative_id) = my_negative_id {
+        println!("id is negative: {:?}", my_negative_id);
     }
     
     println!("\nFlatten: chaining optional logic that might return another Option:");
@@ -117,9 +117,13 @@ fn main() {
         
     println!("\n\nReturn a value (not an option): ");
     println!("\nmap: "); //apply a function to the option value, need to add unwrap to access the value
+    println!(" you just apply a transformation");
+    println!("if the closure return T, use map");
     let mut liquidation_threshold = Some(0.75);
     let liquidation_threshold_per = liquidation_threshold.map(|lt| lt * 100.0);
-    println!("liquidation in %: {}", liquidation_threshold_per.as_ref().unwrap());
+    if let Some(liquid) = liquidation_threshold_per {
+        println!("liquidation in %: {}", liquid);
+    }
 
     println!("\nmap_or: "); //You want to always get a value, even if it's None, give the inner value, no need unwrap
     liquidation_threshold = None;
@@ -133,16 +137,20 @@ fn main() {
     println!("\n\nCombine two options: ");
 
     println!("\nzip: ");//zip Use case: Combine two options into a tuple only if both exist.
-    let liquidation_zipped = my_megative_id.zip(parsed);
+    let liquidation_zipped = my_negative_id.zip(parsed);
     println!("liquidation zipped: {liquidation_zipped:?}");
 
     println!("\nzip with: ");//zip with Use case: Combine two Options with logic (e.g., add, concat, etc.)
-    println!("WARNING: works only in nighly rust");
-    let liquidation_zipped_with = my_megative_id.zip(Some(-35)).map(|(a,b)| a + b);
+    println!("WARNING: works only in nightly rust");
+    let liquidation_zipped_with = my_negative_id.zip(Some(-35)).map(|(a,b)| a + b);
     println!("liquidation zipped: {liquidation_zipped_with:?}");
 
     println!("\n\nBool operator: ");
     println!("\nand_then: "); // chaining multiple operations like parsing or validation that might return Option without match/unwrap.
+    println!(" you apply a tranformation that may fail");
+    println!("if the closure returns option, use and_then");
+    
+    
     println!("or (STATIC feedback): ");
     // static fallback when you have a backup plan, easy way to say “use this if missing”.
     //  let network_name = Some("SOLANA");
@@ -169,7 +177,7 @@ fn main() {
     println!("\ninto_iter: ");
     // You want to move out the value when you do not need anymore, turning it into an iterator of 0 or 1 item.
     let protocol_name: Option<&str> = Some("uniswap");
-    println!("protocol_name: {:?}", protocol_name); //here is consumed
+    println!("protocol_name: {:?}", protocol_name.into_iter()); //here is consumed
     
 
     println!("\niter (more often used with vec, hashmap,...): "); // You want to read the value, Borrows the value inside the Option as &T
@@ -183,20 +191,23 @@ fn main() {
 
 
     println!("\n\nModifying in place: ");
-    println!("\ninsert: ");
-    //you want to force a new value
+    println!("\ninsert: ");//you want to force a new value
+    let mut collateral_ratio: Option<f64> = Some(0.75);
+    let _ = collateral_ratio.insert(0.85);
+    println!("collateral_ratio (inserted): {:?}", collateral_ratio);
+    
+    println!("\nget or insert: "); //you want to ensure a value is present
+    collateral_ratio = None;
+    collateral_ratio.get_or_insert(0.34);
+    println!("collateral_ratio (got or inserted): {:?}", collateral_ratio);
 
-    println!("\nget or insert: ");
-    //you want to ensure a value is present
-
-    println!("\nget or insert with: ");
-    //when value is expensive to compute
-
-    println!("\ntake: ");
-    //you want to move out the value
-
-    println!("\nreplace: ");
-    //you want to swap the value cleanly
+    println!("\nget or insert with: "); //when value is expensive to compute
+    collateral_ratio = None; 
+    collateral_ratio.get_or_insert_with(|| get_or_inserted_with_default());
+    println!("collateral_ratio (got or inserted with): {:?}", collateral_ratio);
+    
+    println!("\ntake: "); //NOT OFTEN USED you want to move out the value
+    println!("\nreplace: "); //RARELY USED you want to swap the value cleanly
 }
 
 //Nullable pointer
@@ -251,6 +262,10 @@ fn map_default() -> f64 {
 
 fn or_else_function(network: Option<&str>) -> Option<&str> {
     Some(network.as_ref()).and(Some(" and Ethereum"))
+}
+
+fn get_or_inserted_with_default() -> f64 {
+    0.92
 }
 
 

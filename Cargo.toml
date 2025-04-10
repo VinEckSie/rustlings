@@ -116,6 +116,7 @@ bin = [
   { name = "errors5_sol", path = "solutions/13_error_handling/errors5.rs" },
   { name = "errors6", path = "exercises/13_error_handling/errors6.rs" },
   { name = "errors6_sol", path = "solutions/13_error_handling/errors6.rs" },
+  { name = "ex_error", path = "exercises/13_error_handling/ex_error.rs" },
   { name = "generics1", path = "exercises/14_generics/generics1.rs" },
   { name = "generics1_sol", path = "solutions/14_generics/generics1.rs" },
   { name = "generics2", path = "exercises/14_generics/generics2.rs" },
