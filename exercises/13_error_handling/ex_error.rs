@@ -12,9 +12,9 @@ fn main() {
     //double check error
     //update with unwrap or else
     //propagating with ?
-    //shorten on ?
+    //shorten on ? 2 examples:
     // fs::read_to_string("hello.txt")
-
+    
     // fn last_char_of_first_line(text: &str) -> Option<char> {
     //     text.lines().next()?.chars().last()
     // }
@@ -36,11 +36,27 @@ fn main() {
     
     
     //struct
-    //We can also define structs to use a generic type parameter in one or more fields using the <> syntax. Listing 10-6 defines a Point<T> struct to hold x and y coordinate values of any type.
+    //with one generic, then with two generics (3 examples for this point)
+    
+    //We can also define structs to use a generic type parameter in one or more fields using the <> syntax. 
+    // Listing 10-6 defines a Point<T> struct to hold x and y coordinate values of any type.
     //with one generics and two generics
-    //If you’re finding you need lots of generic types in your code, it could indicate that your code needs restructuring into smaller pieces.
+    //If you’re finding you need lots of generic types in your code, 
+    // it could indicate that your code needs restructuring into smaller pieces.
 
     //enum
+    //option and result example
     
+    //method
+    //implememt method x on struct Point
+    //implement method only for a certain type
+    //example with mixup
+    
+    //monomorphization; explain the concept
+    
+    //result
+    //use of parse with number litteral
+    
+    //boxing error greate for smalll projects or prototyping
 
 }
