@@ -1,24 +1,44 @@
+use std::fs;
+use std::io::{BufRead, Error};
 use std::fs::File;
+use std::io::{read_to_string, ErrorKind, Read};
 
+
+
+
+// fn main() -> Result<(), Error> {
 fn main() {
     //errorhandling
-    let file = File::open("hello.txt");
+    //let file = File::open("hello.txt");
     
-    let result_file = match file {
-        Ok(file) => file,
-        Err(error) => panic!("There was a problem opening the file: {:?}", error),
-    };
+    //v1 double check error
+    // let result_file  = match file {
+    //     Ok(file) => file,
+    //     Err(error) => match error.kind() {
+    //         ErrorKind::NotFound => match File::create("hello.txt") {
+    //             Ok(newfile) => newfile,
+    //             Err(error) => panic!("Tried to create file but there was a problem: {:?}", error),
+    //         },
+    //         _ => panic!("There was a problem with the file: {:?}", error),
+    //     }
+    // };
     
-    //double check error
-    //update with unwrap or else
+    //v2 update with unwrap or else
+    // let file = File::open("hello.txt").unwrap_or_else(|error| 
+    //     if error.kind() == ErrorKind::NotFound {
+    //         File::create("hello.txt").unwrap_or_else(|error| {
+    //             panic!("could not create file: {:?}", error);
+    //         })
+    //     } else {
+    //         panic!("Problem opening the file: {error:?}");
+    //     }
+    // );
+        
     //propagating with ?
-    //shorten on ? 2 examples:
-    // fs::read_to_string("hello.txt")
-    
-    // fn last_char_of_first_line(text: &str) -> Option<char> {
-    //     text.lines().next()?.chars().last()
-    // }
-
+    // let mut username= "".to_string();
+    // let file = File::open("hello.txt")?.read_to_string(&mut username)?;
+    // print!("{username}");
+    // Ok(())
     
     //generics
     //function
@@ -58,5 +78,10 @@ fn main() {
     //use of parse with number litteral
     
     //boxing error greate for smalll projects or prototyping
+}
 
+
+//shorten on ? 2 examples:
+fn last_char_of_first_line(text: &str) -> Option<char> {
+    text.lines().next()?.chars().last()
 }
