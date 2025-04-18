@@ -228,4 +228,3 @@ mem_forget = "deny"
 disallowed_methods = "allow"
 
 [dependencies]
-unbug = "0.4"
