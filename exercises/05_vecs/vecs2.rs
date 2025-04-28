@@ -22,28 +22,22 @@ fn vec_map(input: &[i32]) -> Vec<i32> {
     // by 2, but with iterator mapping instead of manually pushing into an empty
     // vector.
     // See the example in the function `vec_map_example` above.
-    input
-        .iter()
-        .map(|element| {
-            element * 2
-        })
-        .collect()
+    input.iter().map(|element| element * 2).collect()
 }
 
 fn main() {
     // You can optionally experiment here.
     let input = [2, 4, 6, 8, 10];
-        let ans = vec_loop(&input);
-        println!("{:?}",ans);
+    let ans = vec_loop(&input);
+    println!("{:?}", ans);
 
-        let input = [1, 2, 3];
-        let ans = vec_map_example(&input);
-        println!("{:?}",ans);
-  
+    let input = [1, 2, 3];
+    let ans = vec_map_example(&input);
+    println!("{:?}", ans);
 
-        let input = [2, 4, 6, 8, 10];
-        let ans = vec_map(&input);
-        println!("{:?}",ans);
+    let input = [2, 4, 6, 8, 10];
+    let ans = vec_map(&input);
+    println!("{:?}", ans);
 }
 
 #[cfg(test)]

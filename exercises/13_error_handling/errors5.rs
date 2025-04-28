@@ -5,7 +5,7 @@
 // an "I want anything that does ???" type.
 //
 // In short, this particular use case for boxes is for when you want to own a
-// value and you care only that it is a type which implements a particular
+// value, and you care only that it is a type which implements a particular
 // trait. To do so, The `Box` is declared as of type `Box<dyn Trait>` where
 // `Trait` is the trait the compiler looks for on any value used in that
 // context. For this exercise, that context is the potential errors which
@@ -48,9 +48,12 @@ impl PositiveNonzeroInteger {
 
 // TODO: Add the correct return type `Result<(), Box<dyn ???>>`. What can we
 // use to describe both errors? Is there a trait which both errors implement?
-fn main() {
+fn main() -> Result<PositiveNonzeroInteger, Box<dyn Error>> {
+
     let pretend_user_input = "42";
     let x: i64 = pretend_user_input.parse()?;
-    println!("output={:?}", PositiveNonzeroInteger::new(x)?);
-    Ok(())
+    let positive = PositiveNonzeroInteger::new(x)?;
+    println!("output={:?}", positive);
+    Ok(positive)
+
 }

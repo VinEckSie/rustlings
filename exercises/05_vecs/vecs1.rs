@@ -12,7 +12,7 @@ fn main() {
     // You can optionally experiment here.
     let (a, v) = array_and_vec();
     assert_eq!(a, *v);
-    println!("{:?}",v);
+    println!("{:?}", v);
 }
 
 #[cfg(test)]

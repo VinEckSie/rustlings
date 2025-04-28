@@ -6,12 +6,12 @@ fn maybe_icecream(hour_of_day: u16) -> Option<u16> {
     // TODO: Complete the function body.
     Some(hour_of_day)
         .filter(|&h| h <= 23)
-        .map(|h| if h < 22 {5} else {0})
+        .map(|h| if h < 22 { 5 } else { 0 })
 }
 
 fn main() {
     // You can optionally experiment here.
-    println!("funct: {:?}",maybe_icecream(0));
+    println!("funct: {:?}", maybe_icecream(0));
 }
 
 #[cfg(test)]

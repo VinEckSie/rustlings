@@ -47,10 +47,10 @@ impl State {
         // TODO: Create a match expression to process the different message
         // variants using the methods defined above.
         match message {
-            Message::Resize {width, height}  => self.resize(width, height),
+            Message::Resize { width, height } => self.resize(width, height),
             Message::Move(point) => self.move_position(point),
             Message::Echo(text) => self.echo(text),
-            Message::ChangeColor(r,g,b) =>  self.change_color(r,g,b),
+            Message::ChangeColor(r, g, b) => self.change_color(r, g, b),
             Message::Quit => self.quit(),
         }
     }
@@ -60,7 +60,6 @@ fn main() {
     // You can optionally experiment here.
     test_match_message_call();
 }
-
 
 fn test_match_message_call() {
     let mut state = State {
@@ -88,6 +87,4 @@ fn test_match_message_call() {
     assert_eq!(state.message, "Hello world!");
     assert_eq!(state.color, (255, 0, 255));
     assert!(state.quit);
-
 }
-

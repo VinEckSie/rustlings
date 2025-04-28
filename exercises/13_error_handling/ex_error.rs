@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::{read_to_string, ErrorKind, Read};
 use std::{fs, io};
+use std::error::Error;
 
 // fn main() -> Result<(), Error> {
 fn main() {
@@ -33,7 +34,7 @@ fn main() {
     // );
 
     //propagating with ?
-    //need // fn main() -> Result<(), Error> { for this example
+    // //need  fn main() -> Result<(), Error> { for this example
     // let mut username= "".to_string();
     // let file = File::open("hello.txt")?.read_to_string(&mut username)?;
     // print!("{username}");
@@ -74,10 +75,23 @@ fn main() {
      // let y_u8 = coords_u8.get_y();//not working, because get_y() implemented only for i32 type
     
     let new_double_coords = coords4.mix(coords5);
-    println!("new double coords: {:#?}", new_double_coords)
+    println!("new double coords: {:#?}", new_double_coords);
     
-    //boxing error greate for smalll projects or prototyping
-    
+    //boxing error great for small projects or prototyping
+    match parse_n_double("67") {
+        Ok(w) => println!("sucess: {}", w),
+        Err(e) => println!("error: {}", e),
+    };
+
+    match parse_n_double("texte") {
+        Ok(w) => println!("sucess: {}", w),
+        Err(e) => println!("error: {}", e),
+    };
+
+    match parse_n_double("") {
+        Ok(w) => println!("sucess: {}", w),
+        Err(e) => println!("error: {}", e),
+    };
 }
 
 //Generics part
@@ -111,16 +125,16 @@ struct PointDoubleGeneric<T,U> {
     y: U,
 }
 
-//filter a simple geenric on a tyep
-impl PointSimpleGeneric<u32>{
-    fn get_y(&self) -> &u32{
-        &self.y
+impl<T> PointSimpleGeneric<T>{
+    fn get_x(&self) -> &T {
+        &self.x
     }
 }
 
-impl<T> PointSimpleGeneric<T>{
-    fn get_x(&self) -> &T{
-        &self.x
+//filter a simple generic on a tyep
+impl PointSimpleGeneric<u32>{
+    fn get_y(&self) -> &u32{
+        &self.y
     }
 }
 
@@ -150,13 +164,13 @@ impl<T> PointDoubleGeneric<T, f64>{
     }
 }
 
-
-
-
-
-
-
 //shorten on ? 2 examples:
 fn last_char_of_first_line(text: &str) -> Option<char> {
     text.lines().next()?.chars().last()
+}
+
+//boxing errors
+fn parse_n_double(word: &str) -> Result<i32, Box<dyn Error>> {
+    let pnd = word.parse::<i32>()?;
+    Ok(pnd * 2)
 }

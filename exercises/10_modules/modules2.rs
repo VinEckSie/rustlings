@@ -17,9 +17,5 @@ pub mod delicious_snacks {
 }
 
 fn main() {
-    println!(
-        "favorite snacks: {} and {}",
-        fruit,
-        veggie,
-    );
+    println!("favorite snacks: {} and {}", fruit, veggie,);
 }

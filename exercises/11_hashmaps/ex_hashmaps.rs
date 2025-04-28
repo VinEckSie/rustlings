@@ -7,7 +7,6 @@ fn main() {
     scores.insert(String::from("Yellow"), 50);
     scores.insert(String::from("Red"), 30);
 
-
     let score_team = String::from("Blue");
     let score_blue_team = scores.get(&score_team).copied().unwrap_or(0);
 
@@ -31,6 +30,6 @@ fn main() {
         let count = map.entry(concept).or_insert(0);
         *count += 1;
     }
-    
+
     println!("\n{:?}", map);
 }

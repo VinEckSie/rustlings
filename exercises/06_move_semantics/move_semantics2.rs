@@ -1,6 +1,6 @@
 fn fill_vec(mut vec: Vec<i32>) -> Vec<i32> {
     vec.push(88);
-    
+
     vec
 }
 
@@ -12,5 +12,3 @@ fn main() {
     assert_eq!(vec0, [22, 44, 66]);
     assert_eq!(vec1, [22, 44, 66, 88]);
 }
-
-

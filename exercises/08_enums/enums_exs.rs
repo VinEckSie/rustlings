@@ -4,7 +4,6 @@ fn main() {
     println!("\nEnums: ");
     let four_addr = IpAddrType::V4(127, 0, 0, 1);
     let six_addr = IpAddrType::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1));
-    
 
     println!("{four_addr:?}");
     println!("{six_addr:?}");
@@ -290,5 +289,3 @@ fn increase_coin_value(value: Option<u8>) -> Option<u8> {
 fn get_x_coordonate(x: u8, _: u8) {
     println!("X coordonate: {x:?}");
 }
-
-

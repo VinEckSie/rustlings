@@ -4,7 +4,6 @@
 // types of fruits (e.g. apple, banana, mango) in the basket and the total count
 // of all the fruits should be at least 5.
 
-
 use std::collections::HashMap;
 
 fn fruit_basket() -> HashMap<String, u32> {
@@ -18,7 +17,7 @@ fn fruit_basket() -> HashMap<String, u32> {
 
     basket.insert(String::from("ananas"), 2);
     basket.insert(String::from("mango"), 1);
-    
+
     basket
 }
 
