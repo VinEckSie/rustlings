@@ -13,6 +13,7 @@
 
 use std::error::Error;
 use std::fmt;
+use std::process::{ExitCode, Termination};
 
 #[derive(PartialEq, Debug)]
 enum CreationError {
@@ -43,6 +44,13 @@ impl PositiveNonzeroInteger {
             0 => Err(CreationError::Zero),
             x => Ok(PositiveNonzeroInteger(x as u64)),
         }
+    }
+}
+
+impl Termination for PositiveNonzeroInteger { 
+    fn report(self) -> ExitCode {
+        println!("Program finished: \n{:?}", self);
+        ExitCode::SUCCESS
     }
 }
 
