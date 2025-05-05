@@ -20,13 +20,16 @@ enum ParsePosNonzeroError {
 }
 
 impl ParsePosNonzeroError {
-    fn from_creation(err: CreationError) -> Self {
+    fn from_creation(err: CreationError) -> Self
+    {
         Self::Creation(err)
     }
+    //question why write two times self ?
 
     // TODO: Add another error conversion function here.
     // fn from_parse_int(???) -> Self { ??? }
-    fn from_parse_int(err: ParseIntError) -> Self {
+    fn from_parse_int(err: ParseIntError) -> Self
+    {
         Self::ParseInt(err)
     }
 }
@@ -42,12 +45,17 @@ impl PositiveNonzeroInteger {
             x => Ok(Self(x as u64)),
         }
     }
+    //questions having i64 as parameter already filter to avoid negative number dont ?
+    //so waht is the point of the match especially about negative number if it is already fitered with the parameter of i64 type ?
 
     fn parse(s: &str) -> Result<Self, ParsePosNonzeroError> {
         // TODO: change this to return an appropriate error instead of panicking
         // when `parse()` returns an error.
         //let x: i64 = s.parse().unwrap();
         
+        //questions why use map err here and not sth else like then, unwrap, unwrap or else, etc >
+        //how could i guess what to use here ?
+        //why the first calll, from creation does not need to pass a parameter whereas the signature expect an argument ?
         match s.parse() { 
             Ok(v) => Self::new(v).map_err(ParsePosNonzeroError::from_creation),
             Err(e) => Err(ParsePosNonzeroError::from_parse_int(e)),
