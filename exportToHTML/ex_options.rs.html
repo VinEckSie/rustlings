@@ -1,0 +1,286 @@
+<html>
+<head>
+<title>ex_options.rs</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #080808;}
+.s1 { color: #0033b3;}
+.s2 { color: #067d17;}
+.s3 { color: #0037a6;}
+.s4 { color: #1750eb;}
+.s5 { color: #8c8c8c; font-style: italic;}
+.s6 { color: #20999d; font-style: italic;}
+.ln { color: #aeb3c2; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+ex_options.rs</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a>
+<a name="l2"><span class="ln">2    </span></a><span class="s1">fn </span><span class="s0">main() {</span>
+<a name="l3"><span class="ln">3    </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n\n</span><span class="s2">Nullable pointer: &quot;</span><span class="s0">);</span>
+<a name="l4"><span class="ln">4    </span></a>    <span class="s1">let </span><span class="s0">nullable = None;</span>
+<a name="l5"><span class="ln">5    </span></a>    <span class="s0">check_option(nullable);</span>
+<a name="l6"><span class="ln">6    </span></a>    
+<a name="l7"><span class="ln">7    </span></a>    <span class="s1">let </span><span class="s0">value = Some(Box::new(</span><span class="s4">20</span><span class="s0">));</span>
+<a name="l8"><span class="ln">8    </span></a>    <span class="s0">check_option(value);</span>
+<a name="l9"><span class="ln">9    </span></a>    <span class="s1">let </span><span class="s0">question_value = None;</span>
+<a name="l10"><span class="ln">10   </span></a>
+<a name="l11"><span class="ln">11   </span></a>
+<a name="l12"><span class="ln">12   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n\n</span><span class="s2">? operator: &quot;</span><span class="s0">);</span>
+<a name="l13"><span class="ln">13   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;Value is {:?}&quot;</span><span class="s0">, get_value(question_value));</span>
+<a name="l14"><span class="ln">14   </span></a>
+<a name="l15"><span class="ln">15   </span></a>
+<a name="l16"><span class="ln">16   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n\n</span><span class="s2">Adapters to work with references: &quot;</span><span class="s0">);</span>
+<a name="l17"><span class="ln">17   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">as_ref: &quot;</span><span class="s0">); </span><span class="s5">//used to avoid moving the Option&lt;String&gt;, so we can still use user later.</span>
+<a name="l18"><span class="ln">18   </span></a>    <span class="s1">let mut </span><span class="s0">user_id: Option&lt;String&gt; = Some(</span><span class="s2">&quot;89859574973&quot;</span><span class="s0">.to_string());</span>
+<a name="l19"><span class="ln">19   </span></a>    <span class="s5">//as_ref</span>
+<a name="l20"><span class="ln">20   </span></a>    <span class="s1">match </span><span class="s0">user_id.as_ref() {</span>
+<a name="l21"><span class="ln">21   </span></a>        <span class="s0">Some(user_id) =&gt; println!(</span><span class="s2">&quot;User ID is {:?}&quot;</span><span class="s0">, user_id),</span>
+<a name="l22"><span class="ln">22   </span></a>        <span class="s0">None =&gt; println!(</span><span class="s2">&quot;User ID none&quot;</span><span class="s0">),</span>
+<a name="l23"><span class="ln">23   </span></a>    <span class="s0">}</span>
+<a name="l24"><span class="ln">24   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;User ID Confirmation: {:?}&quot;</span><span class="s0">, user_id); </span><span class="s5">// name is still usable because we didn't take ownership</span>
+<a name="l25"><span class="ln">25   </span></a>
+<a name="l26"><span class="ln">26   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">as_mut: &quot;</span><span class="s0">); </span><span class="s5">//lets you change the value inside the Option directly.</span>
+<a name="l27"><span class="ln">27   </span></a>    <span class="s1">match </span><span class="s0">user_id.as_mut() {</span>
+<a name="l28"><span class="ln">28   </span></a>        <span class="s0">Some(user_id) =&gt; {</span>
+<a name="l29"><span class="ln">29   </span></a>            <span class="s0">*user_id = </span><span class="s2">&quot;new8787878787&quot;</span><span class="s0">.to_string();</span>
+<a name="l30"><span class="ln">30   </span></a>            <span class="s0">println!(</span><span class="s2">&quot;User ID is {:?}&quot;</span><span class="s0">, user_id)</span>
+<a name="l31"><span class="ln">31   </span></a>        <span class="s0">},</span>
+<a name="l32"><span class="ln">32   </span></a>        <span class="s0">None =&gt; println!(</span><span class="s2">&quot;User ID none&quot;</span><span class="s0">),</span>
+<a name="l33"><span class="ln">33   </span></a>    <span class="s0">}</span>
+<a name="l34"><span class="ln">34   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;User ID Confirmation: {:?}&quot;</span><span class="s0">, user_id);</span>
+<a name="l35"><span class="ln">35   </span></a>
+<a name="l36"><span class="ln">36   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">as_deref: &quot;</span><span class="s0">); </span><span class="s5">// rust issue stand by #87121</span>
+<a name="l37"><span class="ln">37   </span></a>    <span class="s1">let </span><span class="s0">user_mail: Option&lt;Box&lt;String&gt;&gt; = Some(Box::new(</span><span class="s2">&quot;mail@example.com&quot;</span><span class="s0">.to_string()));</span>
+<a name="l38"><span class="ln">38   </span></a>    <span class="s1">let </span><span class="s0">string_slice = user_mail.as_deref();</span>
+<a name="l39"><span class="ln">39   </span></a>
+<a name="l40"><span class="ln">40   </span></a>    <span class="s1">match </span><span class="s0">string_slice.as_deref().map(|ref_to_string| ref_to_string.as_str()) {</span>
+<a name="l41"><span class="ln">41   </span></a>        <span class="s0">Some(</span><span class="s2">&quot;mail@example.com&quot;</span><span class="s0">) =&gt; println!(</span><span class="s2">&quot;Matched!&quot;</span><span class="s0">),</span>
+<a name="l42"><span class="ln">42   </span></a>        <span class="s0">Some(other) =&gt; println!(</span><span class="s2">&quot;Other: {}&quot;</span><span class="s0">, other),</span>
+<a name="l43"><span class="ln">43   </span></a>        <span class="s0">None =&gt; println!(</span><span class="s2">&quot;None&quot;</span><span class="s0">),</span>
+<a name="l44"><span class="ln">44   </span></a>    <span class="s0">}</span>
+<a name="l45"><span class="ln">45   </span></a>
+<a name="l46"><span class="ln">46   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">as_deref_mut: &quot;</span><span class="s0">); </span><span class="s5">// editing values inside smart pointers like String, Box&lt;T&gt;, etc.</span>
+<a name="l47"><span class="ln">47   </span></a>    <span class="s1">let mut </span><span class="s0">boxed_name = Box::new(Some(</span><span class="s2">&quot;locust&quot;</span><span class="s0">.to_string()));</span>
+<a name="l48"><span class="ln">48   </span></a>    <span class="s0">clear_user_id(&amp;</span><span class="s1">mut </span><span class="s0">boxed_name);</span>
+<a name="l49"><span class="ln">49   </span></a>
+<a name="l50"><span class="ln">50   </span></a>    <span class="s5">//as pin ref() used inside custom future/stream types or low-level async code. Not needed in everyday Rust.</span>
+<a name="l51"><span class="ln">51   </span></a>    <span class="s5">//as pin mut() Used when building custom futures, generators, or safely mutating data that must not move</span>
+<a name="l52"><span class="ln">52   </span></a>
+<a name="l53"><span class="ln">53   </span></a>
+<a name="l54"><span class="ln">54   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n\n</span><span class="s2">Extracting contained value: &quot;</span><span class="s0">);</span>
+<a name="l55"><span class="ln">55   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">expect: &quot;</span><span class="s0">); </span><span class="s5">//✅ Panic    custom error &quot;msg&quot;  Must-have value, want clear error</span>
+<a name="l56"><span class="ln">56   </span></a>    <span class="s1">let </span><span class="s0">my_id_custom: Option&lt;i32&gt; = Some(-</span><span class="s4">76767676</span><span class="s0">);</span>
+<a name="l57"><span class="ln">57   </span></a>    <span class="s5">//let my_id_custom: Option&lt;i32&gt; = None;</span>
+<a name="l58"><span class="ln">58   </span></a>    <span class="s5">// my_id_custom.expect(&quot;wallet_id not found&quot;);</span>
+<a name="l59"><span class="ln">59   </span></a>
+<a name="l60"><span class="ln">60   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">unwrap: &quot;</span><span class="s0">); </span><span class="s5">//✅ Panic    generic error message   Quick debug code / tests only | Avoid in Production</span>
+<a name="l61"><span class="ln">61   </span></a>    <span class="s5">//my_id_custom.unwrap();</span>
+<a name="l62"><span class="ln">62   </span></a>
+<a name="l63"><span class="ln">63   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">unwrap_or: &quot;</span><span class="s0">); </span><span class="s5">//❌ No panic  Very common in apps, CLI, configs.</span>
+<a name="l64"><span class="ln">64   </span></a>    <span class="s0">my_id_custom.unwrap_or(</span><span class="s4">00000000</span><span class="s0">);</span>
+<a name="l65"><span class="ln">65   </span></a>
+<a name="l66"><span class="ln">66   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">unwrap_or_default: &quot;</span><span class="s0">); </span><span class="s5">//❌ No panic  Great for configs, deserialization, init logic.</span>
+<a name="l67"><span class="ln">67   </span></a>    <span class="s0">my_id_custom.unwrap_or_default();</span>
+<a name="l68"><span class="ln">68   </span></a>
+<a name="l69"><span class="ln">69   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">unwrap_or_else: &quot;</span><span class="s0">); </span><span class="s5">//❌ No panic Most useful in performance-sensitive or async cases | Expensive or lazy fallback</span>
+<a name="l70"><span class="ln">70   </span></a>     <span class="s0">my_id_custom.unwrap_or_else(|| wallet_default_error());</span>
+<a name="l71"><span class="ln">71   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;my_id_custom: {:?}&quot;</span><span class="s0">, my_id_custom);</span>
+<a name="l72"><span class="ln">72   </span></a>
+<a name="l73"><span class="ln">73   </span></a>
+<a name="l74"><span class="ln">74   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n\n</span><span class="s2">Transforming contained values: &quot;</span><span class="s0">);</span>
+<a name="l75"><span class="ln">75   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;Transform Option to Result: &quot;</span><span class="s0">);</span>
+<a name="l76"><span class="ln">76   </span></a>
+<a name="l77"><span class="ln">77   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">ok_or: &quot;</span><span class="s0">);</span><span class="s5">//when you want to convert to Result with a simple error</span>
+<a name="l78"><span class="ln">78   </span></a>    <span class="s1">let mut </span><span class="s0">id_result: Result&lt;_, &amp;str&gt; = my_id_custom.ok_or(</span><span class="s2">&quot;Error: No id result&quot;</span><span class="s0">);</span>
+<a name="l79"><span class="ln">79   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;id_result: {:?}&quot;</span><span class="s0">, id_result);</span>
+<a name="l80"><span class="ln">80   </span></a>
+<a name="l81"><span class="ln">81   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">ok_or_else: &quot;</span><span class="s0">);</span><span class="s5">//when the error needs logic or is expensive</span>
+<a name="l82"><span class="ln">82   </span></a>    <span class="s0">id_result = my_id_custom.ok_or_else(|| result_default_error());</span>
+<a name="l83"><span class="ln">83   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;id_result: {:?}&quot;</span><span class="s0">, id_result);</span>
+<a name="l84"><span class="ln">84   </span></a>
+<a name="l85"><span class="ln">85   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">transpose: &quot;</span><span class="s0">);</span><span class="s5">//when you have an Option&lt;Result&gt; and want clean error handling</span>
+<a name="l86"><span class="ln">86   </span></a>    <span class="s1">let </span><span class="s0">maybe_id: Option&lt;Result&lt;_,_&gt;&gt; = Some(id_result);</span>
+<a name="l87"><span class="ln">87   </span></a>    <span class="s1">let </span><span class="s0">id_verified: Result&lt;_,_&gt; = maybe_id.transpose();</span>
+<a name="l88"><span class="ln">88   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;id_result: {:?}&quot;</span><span class="s0">, id_result);</span>
+<a name="l89"><span class="ln">89   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;id_verified: {:?}&quot;</span><span class="s0">, id_verified);</span>
+<a name="l90"><span class="ln">90   </span></a>    
+<a name="l91"><span class="ln">91   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">Transform Some variant: &quot;</span><span class="s0">);</span>
+<a name="l92"><span class="ln">92   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;Filter: keep Some(t) only if it passes a test: &quot;</span><span class="s0">);</span>
+<a name="l93"><span class="ln">93   </span></a>    <span class="s1">let </span><span class="s0">my_negative_id = my_id_custom.filter(|var| var.is_negative());</span>
+<a name="l94"><span class="ln">94   </span></a>    <span class="s1">if let </span><span class="s0">Some(my_negative_id) = my_negative_id {</span>
+<a name="l95"><span class="ln">95   </span></a>        <span class="s0">println!(</span><span class="s2">&quot;id is negative: {:?}&quot;</span><span class="s0">, my_negative_id);</span>
+<a name="l96"><span class="ln">96   </span></a>    <span class="s0">}</span>
+<a name="l97"><span class="ln">97   </span></a>    
+<a name="l98"><span class="ln">98   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">Flatten: chaining optional logic that might return another Option:&quot;</span><span class="s0">);</span>
+<a name="l99"><span class="ln">99   </span></a>    <span class="s0">println!(</span><span class="s2">&quot;Flatten, parsing value: &quot;</span><span class="s0">);</span>
+<a name="l100"><span class="ln">100  </span></a>    <span class="s1">let </span><span class="s0">account_id = Some(</span><span class="s2">&quot;588&quot;</span><span class="s0">);</span>
+<a name="l101"><span class="ln">101  </span></a>    <span class="s1">let </span><span class="s0">parsed =  account_id.map(|acc| acc.parse::&lt;u32&gt;().ok()).flatten();</span>
+<a name="l102"><span class="ln">102  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;account_id parsed: {:?}&quot;</span><span class="s0">, parsed);</span>
+<a name="l103"><span class="ln">103  </span></a>
+<a name="l104"><span class="ln">104  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">Flatten, error handling: &quot;</span><span class="s0">);</span>
+<a name="l105"><span class="ln">105  </span></a>    <span class="s1">let </span><span class="s0">account_error: Result&lt;Result&lt;i32, &amp;str&gt;, &amp;str&gt; = Ok(Ok(</span><span class="s4">642</span><span class="s0">));</span>
+<a name="l106"><span class="ln">106  </span></a>    <span class="s1">let </span><span class="s0">account_error_flat = account_error.iter().flatten();</span>
+<a name="l107"><span class="ln">107  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;Flatten, flat error: {:?}&quot;</span><span class="s0">, account_error_flat);</span>
+<a name="l108"><span class="ln">108  </span></a>
+<a name="l109"><span class="ln">109  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">Flatten, working with iterators: &quot;</span><span class="s0">);</span>
+<a name="l110"><span class="ln">110  </span></a>    <span class="s1">let </span><span class="s0">my_vec = vec![Some(</span><span class="s2">&quot;588&quot;</span><span class="s0">), None, Some(</span><span class="s2">&quot;554&quot;</span><span class="s0">)];</span>
+<a name="l111"><span class="ln">111  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;my_vec_processed: {:?}&quot;</span><span class="s0">, my_vec</span>
+<a name="l112"><span class="ln">112  </span></a>            <span class="s0">.iter()</span>
+<a name="l113"><span class="ln">113  </span></a>            <span class="s0">.flatten()</span>
+<a name="l114"><span class="ln">114  </span></a>            <span class="s0">.collect::&lt;Vec&lt;_&gt;&gt;());</span>
+<a name="l115"><span class="ln">115  </span></a>    
+<a name="l116"><span class="ln">116  </span></a>        
+<a name="l117"><span class="ln">117  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n\n</span><span class="s2">Return a value (not an option): &quot;</span><span class="s0">);</span>
+<a name="l118"><span class="ln">118  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">map: &quot;</span><span class="s0">); </span><span class="s5">//apply a function to the option value, need to add unwrap to access the value</span>
+<a name="l119"><span class="ln">119  </span></a>    <span class="s1">let mut </span><span class="s0">liquidation_threshold = Some(</span><span class="s4">0</span><span class="s0">.</span><span class="s4">75</span><span class="s0">);</span>
+<a name="l120"><span class="ln">120  </span></a>    <span class="s1">let </span><span class="s0">liquidation_threshold_per = liquidation_threshold.map(|lt| lt * </span><span class="s4">100</span><span class="s0">.</span><span class="s4">0</span><span class="s0">);</span>
+<a name="l121"><span class="ln">121  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;liquidation in %: {}&quot;</span><span class="s0">, liquidation_threshold_per.as_ref().unwrap());</span>
+<a name="l122"><span class="ln">122  </span></a>
+<a name="l123"><span class="ln">123  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">map_or: &quot;</span><span class="s0">); </span><span class="s5">//You want to always get a value, even if it's None, give the inner value, no need unwrap</span>
+<a name="l124"><span class="ln">124  </span></a>    <span class="s0">liquidation_threshold = None;</span>
+<a name="l125"><span class="ln">125  </span></a>    <span class="s1">let </span><span class="s0">liquidation_threshold_dft = liquidation_threshold.map_or(</span><span class="s4">50</span><span class="s0">.</span><span class="s4">0</span><span class="s0">, |lt| lt * </span><span class="s4">100</span><span class="s0">.</span><span class="s4">0</span><span class="s0">);</span>
+<a name="l126"><span class="ln">126  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;liquidation (default value) {}&quot;</span><span class="s0">, liquidation_threshold_dft);</span>
+<a name="l127"><span class="ln">127  </span></a>
+<a name="l128"><span class="ln">128  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">map_or_else: &quot;</span><span class="s0">);</span><span class="s5">//map or else Use case: Computing the fallback is expensive or contextual.</span>
+<a name="l129"><span class="ln">129  </span></a>    <span class="s1">let </span><span class="s0">liquidation_threshold_exp = liquidation_threshold.map_or_else (|| map_default(), |lt| lt * </span><span class="s4">100</span><span class="s0">.</span><span class="s4">0</span><span class="s0">);</span>
+<a name="l130"><span class="ln">130  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;liquidation (default expensive value) {}&quot;</span><span class="s0">, liquidation_threshold_exp);</span>
+<a name="l131"><span class="ln">131  </span></a>
+<a name="l132"><span class="ln">132  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n\n</span><span class="s2">Combine two options: &quot;</span><span class="s0">);</span>
+<a name="l133"><span class="ln">133  </span></a>
+<a name="l134"><span class="ln">134  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">zip: &quot;</span><span class="s0">);</span><span class="s5">//zip Use case: Combine two options into a tuple only if both exist.</span>
+<a name="l135"><span class="ln">135  </span></a>    <span class="s1">let </span><span class="s0">liquidation_zipped = my_negative_id.zip(parsed);</span>
+<a name="l136"><span class="ln">136  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;liquidation zipped: {liquidation_zipped:?}&quot;</span><span class="s0">);</span>
+<a name="l137"><span class="ln">137  </span></a>
+<a name="l138"><span class="ln">138  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">zip with: &quot;</span><span class="s0">);</span><span class="s5">//zip with Use case: Combine two Options with logic (e.g., add, concat, etc.)</span>
+<a name="l139"><span class="ln">139  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;WARNING: works only in nightly rust&quot;</span><span class="s0">);</span>
+<a name="l140"><span class="ln">140  </span></a>    <span class="s1">let </span><span class="s0">liquidation_zipped_with = my_negative_id.zip(Some(-</span><span class="s4">35</span><span class="s0">)).map(|(a,b)| a + b);</span>
+<a name="l141"><span class="ln">141  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;liquidation zipped: {liquidation_zipped_with:?}&quot;</span><span class="s0">);</span>
+<a name="l142"><span class="ln">142  </span></a>
+<a name="l143"><span class="ln">143  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n\n</span><span class="s2">Bool operator: &quot;</span><span class="s0">);</span>
+<a name="l144"><span class="ln">144  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">and_then: &quot;</span><span class="s0">); </span><span class="s5">// chaining multiple operations like parsing or validation that might return Option without match/unwrap.</span>
+<a name="l145"><span class="ln">145  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;or (STATIC feedback): &quot;</span><span class="s0">);</span>
+<a name="l146"><span class="ln">146  </span></a>    <span class="s5">// static fallback when you have a backup plan, easy way to say “use this if missing”.</span>
+<a name="l147"><span class="ln">147  </span></a>    <span class="s5">//  let network_name = Some(&quot;SOLANA&quot;);</span>
+<a name="l148"><span class="ln">148  </span></a>    <span class="s1">let </span><span class="s0">network_name: Option&lt;&amp;str&gt; = None;</span>
+<a name="l149"><span class="ln">149  </span></a>    <span class="s1">let </span><span class="s0">network_updated = network_name</span>
+<a name="l150"><span class="ln">150  </span></a>        <span class="s0">.and_then(|n| </span><span class="s1">if </span><span class="s0">n.contains(</span><span class="s2">&quot;SOLANA&quot;</span><span class="s0">) {Some(n)} </span><span class="s1">else </span><span class="s0">{None})</span>
+<a name="l151"><span class="ln">151  </span></a>        <span class="s0">.or(Some(</span><span class="s2">&quot;Polygon&quot;</span><span class="s0">));</span>
+<a name="l152"><span class="ln">152  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;network_updated with or: {:?}&quot;</span><span class="s0">, network_updated);</span>
+<a name="l153"><span class="ln">153  </span></a>
+<a name="l154"><span class="ln">154  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">and_then: &quot;</span><span class="s0">); </span><span class="s5">// chaining multiple operations like parsing or validation that might return Option without match/unwrap.</span>
+<a name="l155"><span class="ln">155  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;or_else (LAZY feedback): &quot;</span><span class="s0">); </span><span class="s5">// Use or_else to call a function only if None—a lazy fallback that only computes if needed,</span>
+<a name="l156"><span class="ln">156  </span></a>    <span class="s1">let </span><span class="s0">network_updated_else = network_name</span>
+<a name="l157"><span class="ln">157  </span></a>        <span class="s0">.and_then(|n| </span><span class="s1">if </span><span class="s0">n.contains(</span><span class="s2">&quot;SOLANA&quot;</span><span class="s0">) {Some(n)} </span><span class="s1">else </span><span class="s0">{None})</span>
+<a name="l158"><span class="ln">158  </span></a>        <span class="s0">.or_else(|| or_else_function(network_name));</span>
+<a name="l159"><span class="ln">159  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;network_updated with or_else: {:?}&quot;</span><span class="s0">, network_updated_else);</span>
+<a name="l160"><span class="ln">160  </span></a>    
+<a name="l161"><span class="ln">161  </span></a>    <span class="s5">//NOT USED OFTEN</span>
+<a name="l162"><span class="ln">162  </span></a>    <span class="s5">//and(opt) = Too limited — and_then() is always more flexible (can return different type, apply logic)</span>
+<a name="l163"><span class="ln">163  </span></a>    <span class="s5">// xor(opt) = Rarely needed — only useful in weird “only one must be Some” situations, almost never seen in real code.</span>
+<a name="l164"><span class="ln">164  </span></a>    <span class="s5">// and_then(None → None) &amp; or_else(Some → ignored) : These are already covered by and_then() and or_else() — no need to remember the internals.</span>
+<a name="l165"><span class="ln">165  </span></a>
+<a name="l166"><span class="ln">166  </span></a>
+<a name="l167"><span class="ln">167  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n\n</span><span class="s2">Iterate: &quot;</span><span class="s0">);</span>
+<a name="l168"><span class="ln">168  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">into_iter: &quot;</span><span class="s0">);</span>
+<a name="l169"><span class="ln">169  </span></a>    <span class="s5">// You want to move out the value when you do not need anymore, turning it into an iterator of 0 or 1 item.</span>
+<a name="l170"><span class="ln">170  </span></a>    <span class="s1">let </span><span class="s0">protocol_name: Option&lt;&amp;str&gt; = Some(</span><span class="s2">&quot;uniswap&quot;</span><span class="s0">);</span>
+<a name="l171"><span class="ln">171  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;protocol_name: {:?}&quot;</span><span class="s0">, protocol_name); </span><span class="s5">//here is consumed</span>
+<a name="l172"><span class="ln">172  </span></a>    
+<a name="l173"><span class="ln">173  </span></a>
+<a name="l174"><span class="ln">174  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">iter (more often used with vec, hashmap,...): &quot;</span><span class="s0">); </span><span class="s5">// You want to read the value, Borrows the value inside the Option as &amp;T</span>
+<a name="l175"><span class="ln">175  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;iter_mut (more often used with vec, hashmap,..): &quot;</span><span class="s0">); </span><span class="s5">// You want to modify the value inside the Option safely, Borrows the value inside as &amp;mut T.</span>
+<a name="l176"><span class="ln">176  </span></a>
+<a name="l177"><span class="ln">177  </span></a>
+<a name="l178"><span class="ln">178  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n\n</span><span class="s2">Collecting infos (not very useful except for writing generic code): &quot;</span><span class="s0">); </span><span class="s5">//collecting into (if any is None =&gt; None is returned)</span>
+<a name="l179"><span class="ln">179  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;collect: &quot;</span><span class="s0">); </span><span class="s5">// when you're transforming or validating data and want to stop on first failure. when you want all-or-nothing collection</span>
+<a name="l180"><span class="ln">180  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;sum: &quot;</span><span class="s0">); </span><span class="s5">// when you're aggregating validated inputs (e.g. user scores, parsed data). when You want to add only if all are valid</span>
+<a name="l181"><span class="ln">181  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;product: &quot;</span><span class="s0">); </span><span class="s5">// when you’re computing totals from optional or fallible data sources. when You want to multiply only if all valid</span>
+<a name="l182"><span class="ln">182  </span></a>
+<a name="l183"><span class="ln">183  </span></a>
+<a name="l184"><span class="ln">184  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n\n</span><span class="s2">Modifying in place: &quot;</span><span class="s0">);</span>
+<a name="l185"><span class="ln">185  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">insert: &quot;</span><span class="s0">);</span><span class="s5">//you want to force a new value</span>
+<a name="l186"><span class="ln">186  </span></a>    <span class="s1">let mut </span><span class="s0">collateral_ratio: Option&lt;f64&gt; = Some(</span><span class="s4">0</span><span class="s0">.</span><span class="s4">75</span><span class="s0">);</span>
+<a name="l187"><span class="ln">187  </span></a>    <span class="s1">let </span><span class="s0">_ = collateral_ratio.insert(</span><span class="s4">0</span><span class="s0">.</span><span class="s4">85</span><span class="s0">);</span>
+<a name="l188"><span class="ln">188  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;collateral_ratio (inserted): {:?}&quot;</span><span class="s0">, collateral_ratio);</span>
+<a name="l189"><span class="ln">189  </span></a>    
+<a name="l190"><span class="ln">190  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">get or insert: &quot;</span><span class="s0">); </span><span class="s5">//you want to ensure a value is present</span>
+<a name="l191"><span class="ln">191  </span></a>    <span class="s0">collateral_ratio = None;</span>
+<a name="l192"><span class="ln">192  </span></a>    <span class="s0">collateral_ratio.get_or_insert(</span><span class="s4">0</span><span class="s0">.</span><span class="s4">34</span><span class="s0">);</span>
+<a name="l193"><span class="ln">193  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;collateral_ratio (got or inserted): {:?}&quot;</span><span class="s0">, collateral_ratio);</span>
+<a name="l194"><span class="ln">194  </span></a>
+<a name="l195"><span class="ln">195  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">get or insert with: &quot;</span><span class="s0">); </span><span class="s5">//when value is expensive to compute</span>
+<a name="l196"><span class="ln">196  </span></a>    <span class="s0">collateral_ratio = None; </span>
+<a name="l197"><span class="ln">197  </span></a>    <span class="s0">collateral_ratio.get_or_insert_with(|| get_or_inserted_with_default());</span>
+<a name="l198"><span class="ln">198  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;collateral_ratio (got or inserted with): {:?}&quot;</span><span class="s0">, collateral_ratio);</span>
+<a name="l199"><span class="ln">199  </span></a>    
+<a name="l200"><span class="ln">200  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">take: &quot;</span><span class="s0">); </span><span class="s5">//NOT OFTEN USED you want to move out the value</span>
+<a name="l201"><span class="ln">201  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;</span><span class="s3">\n</span><span class="s2">replace: &quot;</span><span class="s0">); </span><span class="s5">//RARELY USED you want to swap the value cleanly</span>
+<a name="l202"><span class="ln">202  </span></a><span class="s0">}</span>
+<a name="l203"><span class="ln">203  </span></a>
+<a name="l204"><span class="ln">204  </span></a><span class="s5">//Nullable pointer</span>
+<a name="l205"><span class="ln">205  </span></a><span class="s1">fn </span><span class="s0">check_option(optional: Option&lt;Box&lt;i32&gt;&gt;) {</span>
+<a name="l206"><span class="ln">206  </span></a>    <span class="s1">match </span><span class="s0">optional {</span>
+<a name="l207"><span class="ln">207  </span></a>        <span class="s0">Some(x) =&gt; println!(</span><span class="s2">&quot;Value: {}&quot;</span><span class="s0">, x),</span>
+<a name="l208"><span class="ln">208  </span></a>        <span class="s0">None =&gt; println!(</span><span class="s2">&quot;None&quot;</span><span class="s0">),</span>
+<a name="l209"><span class="ln">209  </span></a>    <span class="s0">}</span>
+<a name="l210"><span class="ln">210  </span></a><span class="s0">}</span>
+<a name="l211"><span class="ln">211  </span></a>
+<a name="l212"><span class="ln">212  </span></a><span class="s5">//? operator (shorter way as match pattern)</span>
+<a name="l213"><span class="ln">213  </span></a><span class="s5">// Use ? when…  </span>
+<a name="l214"><span class="ln">214  </span></a><span class="s5">// You just want to propagate None upwards | You’re in a function that returns Option | You want cleaner, linear code | You want fewer nested blocks</span>
+<a name="l215"><span class="ln">215  </span></a><span class="s5">// Use match when…</span>
+<a name="l216"><span class="ln">216  </span></a><span class="s5">// You want to handle None differently | You're doing something more complex | You’re matching on multiple values at once | You need different logic per match arm</span>
+<a name="l217"><span class="ln">217  </span></a><span class="s1">fn </span><span class="s0">get_value(optional: Option&lt;String&gt;)  -&gt; Option&lt;String&gt; {</span>
+<a name="l218"><span class="ln">218  </span></a>    <span class="s0">Some(optional)?</span>
+<a name="l219"><span class="ln">219  </span></a><span class="s0">}</span>
+<a name="l220"><span class="ln">220  </span></a>
+<a name="l221"><span class="ln">221  </span></a><span class="s5">//NPO (Nullable pointer optimization)</span>
+<a name="l222"><span class="ln">222  </span></a><span class="s5">// Concept                                  What to remember</span>
+<a name="l223"><span class="ln">223  </span></a><span class="s5">// Option&lt;Box&lt;T&gt;&gt;, Option&lt;&amp;T&gt;               Zero-cost — same size as the pointer</span>
+<a name="l224"><span class="ln">224  </span></a><span class="s5">// Use Option for optional fields           It’s safe and efficient</span>
+<a name="l225"><span class="ln">225  </span></a><span class="s5">// #[repr(transparent)] structs             Inherit optimization from inner type</span>
+<a name="l226"><span class="ln">226  </span></a><span class="s5">// Don't worry about transmute              Unless doing unsafe systems-level work</span>
+<a name="l227"><span class="ln">227  </span></a><span class="s5">// Safe nullable pointers                   Use Option always — no null bugs</span>
+<a name="l228"><span class="ln">228  </span></a>
+<a name="l229"><span class="ln">229  </span></a>
+<a name="l230"><span class="ln">230  </span></a><span class="s5">//Adapters to work with references</span>
+<a name="l231"><span class="ln">231  </span></a><span class="s5">// as_deref_mut</span>
+<a name="l232"><span class="ln">232  </span></a><span class="s1">fn </span><span class="s0">clear_user_id(user_id: &amp;</span><span class="s1">mut </span><span class="s0">Box&lt;Option&lt;String&gt;&gt;) {</span>
+<a name="l233"><span class="ln">233  </span></a>    <span class="s1">if let </span><span class="s0">Some(id) = user_id.as_deref_mut() {</span>
+<a name="l234"><span class="ln">234  </span></a>        <span class="s0">println!(</span><span class="s2">&quot;Clearing user {:?}&quot;</span><span class="s0">, id.to_uppercase());</span>
+<a name="l235"><span class="ln">235  </span></a>    <span class="s0">}</span>
+<a name="l236"><span class="ln">236  </span></a><span class="s0">}</span>
+<a name="l237"><span class="ln">237  </span></a>
+<a name="l238"><span class="ln">238  </span></a><span class="s5">//unwrap_or_else()</span>
+<a name="l239"><span class="ln">239  </span></a><span class="s1">fn </span><span class="s0">wallet_default_error() -&gt; i32 {</span>
+<a name="l240"><span class="ln">240  </span></a>    <span class="s0">println!(</span><span class="s2">&quot;wallet_default_error&quot;</span><span class="s0">);</span>
+<a name="l241"><span class="ln">241  </span></a>    <span class="s4">9999</span>
+<a name="l242"><span class="ln">242  </span></a><span class="s0">}</span>
+<a name="l243"><span class="ln">243  </span></a>
+<a name="l244"><span class="ln">244  </span></a><span class="s5">//ok_or_else</span>
+<a name="l245"><span class="ln">245  </span></a><span class="s1">fn </span><span class="s0">result_default_error() -&gt; &amp;</span><span class="s6">'static </span><span class="s0">str {</span>
+<a name="l246"><span class="ln">246  </span></a>    <span class="s2">&quot;wallet_default_error&quot;</span>
+<a name="l247"><span class="ln">247  </span></a><span class="s0">}</span>
+<a name="l248"><span class="ln">248  </span></a>
+<a name="l249"><span class="ln">249  </span></a><span class="s5">//ok_or_else</span>
+<a name="l250"><span class="ln">250  </span></a><span class="s1">fn </span><span class="s0">map_default() -&gt; f64 {</span>
+<a name="l251"><span class="ln">251  </span></a>    <span class="s4">25</span><span class="s0">.</span><span class="s4">0</span>
+<a name="l252"><span class="ln">252  </span></a><span class="s0">}</span>
+<a name="l253"><span class="ln">253  </span></a>
+<a name="l254"><span class="ln">254  </span></a><span class="s1">fn </span><span class="s0">or_else_function(network: Option&lt;&amp;str&gt;) -&gt; Option&lt;&amp;str&gt; {</span>
+<a name="l255"><span class="ln">255  </span></a>    <span class="s0">Some(network.as_ref()).and(Some(</span><span class="s2">&quot; and Ethereum&quot;</span><span class="s0">))</span>
+<a name="l256"><span class="ln">256  </span></a><span class="s0">}</span>
+<a name="l257"><span class="ln">257  </span></a>
+<a name="l258"><span class="ln">258  </span></a><span class="s1">fn </span><span class="s0">get_or_inserted_with_default() -&gt; f64 {</span>
+<a name="l259"><span class="ln">259  </span></a>    <span class="s4">0</span><span class="s0">.</span><span class="s4">92</span>
+<a name="l260"><span class="ln">260  </span></a><span class="s0">}</span>
+<a name="l261"><span class="ln">261  </span></a>
+<a name="l262"><span class="ln">262  </span></a>
+<a name="l263"><span class="ln">263  </span></a></pre>
+</body>
+</html>
