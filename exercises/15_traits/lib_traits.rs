@@ -1,9 +1,5 @@
 
-//traits as parameters (simple and multiples)
-//where clause
-//as return type
-//conditional implements with traits
-
+use std::fmt::Debug;
 
 //simple trait
 pub trait Summarize {
@@ -14,6 +10,24 @@ pub trait Summarize {
     }
 }
 
+//trait as parameters
+pub fn notification<T: Summarize> (item: &T) -> String {
+    format!("Update: {}", item.sum_up())
+}
+
+pub fn display_notification<T> (item: &T) -> String
+where
+    T: Summarize + Debug
+{
+    format!("Display update: {}", item.sum_up_default())
+}
+
+//Demo purpose about Trait return type
+pub fn get_item<T: Summarize> (item: T) -> impl Summarize {
+    item
+}
+
+#[derive(Debug)]
 pub struct Transaction {
     from: String,
     to: String,
@@ -21,11 +35,13 @@ pub struct Transaction {
     token: String,
 }
 
+
 impl Transaction {
     pub fn new() -> Self {
         Transaction {
             from: String::from("ffeefeij84875489357eoie"),
             to: String::from("fjiejfowejiowefjeifo"),
+
             amount: 50.00,
             token: String::from("SOL")
         }
@@ -35,6 +51,7 @@ impl Transaction {
         self.amount
     }
 }
+
 impl Summarize for Transaction {
     fn sum_up(&self) -> String {
         format!("Transaction processed from {} to {} for an amount of {}", self.from, self.to, self.amount)
@@ -45,6 +62,7 @@ impl Summarize for Transaction {
     }
 }
 
+#[derive(Debug)]
 pub struct Block {
     bloc_id: u64,
     hash: String,
