@@ -18,8 +18,14 @@ fn main() {
     let text = String::from(" All humans are born equals. Just some work harder.");
     let quote = text.split(".").nth(1).unwrap_or_else(|| "no quote");
     let my_note = Notes { quote };
+    println!("{}", my_note.level());
+    println!("{}", my_note.level_add("addition"));
 
-    println!("{quote}");
+    println!("\n {quote}");
+
+    //static lifetime lie &str
+
+    //Generic, Bounds and lifetime in one with the longest function
 }
 
 fn longest<'a>(first_num: &'a str, second_num: &'a str) -> &'a str {
@@ -39,4 +45,18 @@ fn longest<'a>(first_num: &'a str, second_num: &'a str) -> &'a str {
 //struct def
 struct Notes<'a> {
     quote: &'a str,
+}
+
+//Rust Elision Rules
+impl<'a> Notes<'a> {
+    //Rust Elision first & second rule: all input lifetimes get a dedicated lifetime
+    fn level(&self) -> i32 {
+        7
+    }
+
+    //Rust Elision third rule: all input lifetimes get a dedicated lifetime
+    fn level_add(&self, notes_supp: &str) -> &str {
+        println!("\n leval_add method: {}", notes_supp);
+        self.quote
+    }
 }
