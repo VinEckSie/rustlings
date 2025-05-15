@@ -160,6 +160,7 @@ bin = [
     { name = "iterators4_sol", path = "solutions/18_iterators/iterators4.rs" },
     { name = "iterators5", path = "exercises/18_iterators/iterators5.rs" },
     { name = "iterators5_sol", path = "solutions/18_iterators/iterators5.rs" },
+    { name = "ex_iterators", path = "exercises/18_iterators/ex_iterators.rs" },
     { name = "box1", path = "exercises/19_smart_pointers/box1.rs" },
     { name = "box1_sol", path = "solutions/19_smart_pointers/box1.rs" },
     { name = "rc1", path = "exercises/19_smart_pointers/rc1.rs" },
