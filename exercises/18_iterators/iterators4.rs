@@ -1,4 +1,4 @@
-fn factorial(num: u64) {
+fn factorial(num: u64) -> u64 {
     // TODO: Complete this function to return the factorial of `num` which is
     // defined as `1 * 2 * 3 * … * num`.
     // https://en.wikipedia.org/wiki/Factorial
@@ -10,7 +10,9 @@ fn factorial(num: u64) {
     // - additional variables
     // For an extra challenge, don't use:
     // - recursion
-    //(1..=num).rev().fold(1, |acc, a| acc * a);
+    (1..=num)
+        .rev() //get an iterator of each number between the argument and 1
+        .fold(1, |acc, a| acc * a) //apply an operation between each term
 }
 
 fn main() {
