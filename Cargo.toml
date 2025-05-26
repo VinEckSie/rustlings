@@ -170,6 +170,8 @@ bin = [
     { name = "cow1", path = "exercises/19_smart_pointers/cow1.rs" },
     { name = "cow1_sol", path = "solutions/19_smart_pointers/cow1.rs" },
     { name = "threads1", path = "exercises/20_threads/threads1.rs" },
+    { name = "ex_pointers", path = "exercises/19_smart_pointers/ex_pointers.rs" },
+    { name = "ex_mutex", path = "exercises/19_smart_pointers/ex_mutex.rs" },
     { name = "threads1_sol", path = "solutions/20_threads/threads1.rs" },
     { name = "threads2", path = "exercises/20_threads/threads2.rs" },
     { name = "threads2_sol", path = "solutions/20_threads/threads2.rs" },

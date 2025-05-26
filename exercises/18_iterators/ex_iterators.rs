@@ -21,12 +21,13 @@ fn main() {
 
     //consuming adapters
     // let sum_val: f64 = vel_iter.copied().sum();
+    // let sum_val2: f64 = vel_iter.collect();
     // println!("Sum: {sum_val}");
 
     //iterators adapters (don't consume but produce other adapters): map, filter, take
     //they are lazy, so we need to call a consuming adapter, like collect()
-    //let increase_velocity: Vec<_> = vel_iter.map(|x| x + 5.0).collect();
-    // dbg!(increase_velocity);
+    let increase_velocity: Vec<_> = vel_iter.map(|x| x + 5.0).collect();
+    dbg!(increase_velocity);
 
     //closure to capture environment
     // let minimum_velocity: Vec<_> = velocity_ms.into_iter().filter(|&val| val > 100.0).collect();
