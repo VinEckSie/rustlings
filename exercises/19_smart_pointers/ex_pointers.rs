@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::rc::Rc;
 use List::{Cons as BCons, Nil as BNil};
 use ListRc::{Cons as RcCons, Nil as RcNil};
@@ -30,6 +31,8 @@ fn main() {
     // RC:  Reference counting pointer enables you to allow data to have multiple owners
     // by keeping track of the number of owners and, when no owners remain, cleaning up the data.
     //only for a single thread
+
+    //take care about references cycles causing memory leaks when two Rcs reference each other
     let list_1 = Rc::new(RcCons(
         2,
         Rc::new(RcCons(5, Rc::new(RcCons(7, Rc::new(RcNil))))),
@@ -72,6 +75,24 @@ fn main() {
     }
 
     dbg!(&temperature);
+
+    //CoW enum (Clone on Write)
+    //when you might need to mutate
+    //In Rust, mutability is not transitive
+    //Rust auto-derefs for method calls
+
+    let mut borrowed_alt = Cow::from("borrowed altitude");
+    let mut owned_alt = Cow::from("owned altitude".to_string());
+
+    may_change_altitude(&mut borrowed_alt);
+    dbg!(borrowed_alt);
+
+    may_change_altitude(&mut owned_alt);
+    dbg!(owned_alt);
+
+    //when you want to let the flexibility deal with borrowed or owned values
+
+    //when you wanna read-only borrowed values
 } // both are deallocated here
 
 #[derive(Debug)]
@@ -84,4 +105,12 @@ enum List {
 enum ListRc {
     Cons(i32, Rc<ListRc>),
     Nil,
+}
+
+fn may_change_altitude(alt: &mut Cow<str>) {
+    let need_mutation = true;
+
+    if need_mutation {
+        alt.to_mut().push_str(", second text");
+    }
 }
