@@ -1,16 +1,17 @@
 use std::borrow::Cow;
+use std::fmt::Debug;
 use std::rc::Rc;
 use List::{Cons as BCons, Nil as BNil};
 use ListRc::{Cons as RcCons, Nil as RcNil};
 fn main() {
     // A pointer is a general concept for a variable that contains an address in memory
 
-    // in many cases smart pointers own the data they point to.
+    // In many cases smart pointers own the data they point to.
     // String and Vec<T> count as smart pointers because they own some memory and allow you to manipulate it.
     // Smart pointers are usually implemented using structs. Unlike an ordinary struct, smart pointers implement
     //the Deref trait: allows an instance of the smart pointer struct to behave like a reference so you can write your code
     //      to work with either references or smart pointers.
-    // and Drop trait: allows you to customize the code that’s run when an instance of the smart pointer goes out of scope.
+    // And Drop trait: allows you to customize the code that’s run when an instance of the smart pointer goes out of scope.
 
     // most common smart pointers:
     // Box<T>, for allocating values on the heap
@@ -76,23 +77,59 @@ fn main() {
 
     dbg!(&temperature);
 
-    //CoW enum (Clone on Write)
-    //when you might need to mutate
-    //In Rust, mutability is not transitive
-    //Rust auto-derefs for method calls
+    // Cow (Clone-On-Write)
+    // Cow<'a, T> is an enum: Borrowed(&'a T) or Owned(T)
+    // Acts like a reference (&T) until mutation is needed → then clones to an owned value
+    // Enables shared logic for borrowed and owned data without duplicating code
+    // Ideal for read-mostly cases with occasional mutation
 
-    let mut borrowed_alt = Cow::from("borrowed altitude");
-    let mut owned_alt = Cow::from("owned altitude".to_string());
+    // Why Cow Exists (Real-World Need)
+    // In real programs:
+    // Borrowed data: default values, constants, compile-time strings → "hello"
+    // Owned data: user input, file content, runtime strings → String
+    // You often work in mixed scenarios: some data comes from memory you don’t own, others are dynamically created
+    // You don't want to write two versions of every function or struct → Cow unifies both cases
 
-    may_change_altitude(&mut borrowed_alt);
-    dbg!(borrowed_alt);
+    // Use Cases
+    // Use Case	Why Cow Helps
+    // Static or dynamic input	One function for both; avoids unnecessary allocation
+    // Optional mutation	Clones only if mutation is needed (.to_mut() is lazy)
+    // Long-lived config or struct	Supports literals and runtime-generated data
 
-    may_change_altitude(&mut owned_alt);
-    dbg!(owned_alt);
+    // Rust Behavior Notes
+    // Mutability is not transitive: you can mutate a variable, and not when it is used as parameters
+    // Rust auto-derefs for method calls → no need to use *
 
-    //when you want to let the flexibility deal with borrowed or owned values
+    // Practical Usage Tips
+    // If a function takes Cow<str> or Cow<[T]>:
+    // "hello".into() → becomes Cow::Borrowed
+    // String::from("...").into() → becomes Cow::Owned
+    // Prefer .into() over Cow::Owned(...) or .to_string() for ergonomic code
 
-    //when you wanna read-only borrowed values
+    //read-only logging function
+    //static log
+    let default_temp: Cow<str> = "30 degrees".into();
+    read_log(default_temp);
+    //dynamics log
+    let user_input_temp: Cow<str> = String::from("45 degrees").into();
+    read_log(user_input_temp);
+
+    //optional mutation (sanitizing user input before saving)
+    //static input
+    let mut default_input: Cow<str> = "Hello".into();
+    read_input(&mut default_input);
+    //dynamics input no need to mutate
+    let mut user_input_forbidden: Cow<str> = String::from("Forbidden to update").into();
+    read_input(&mut user_input_forbidden);
+    //dynamics input need to mutate
+    let mut user_input_change: Cow<str> = String::from("ok to change").into();
+    read_input(&mut user_input_change);
+
+    //user config struct with flexibility
+    let default_config = ModuleConfig::default_config();
+    dbg!(default_config);
+    let user_config = ModuleConfig::dyn_config(String::from("Cubesat"), String::from("Jupiter"));
+    dbg!(user_config);
 } // both are deallocated here
 
 #[derive(Debug)]
@@ -107,10 +144,53 @@ enum ListRc {
     Nil,
 }
 
-fn may_change_altitude(alt: &mut Cow<str>) {
-    let need_mutation = true;
+// fn may_change_altitude(alt: &mut Cow<str>) {
+//     let need_mutation = true;
+//
+//     if need_mutation {
+//         alt.to_mut().push_str(", second text");
+//     }
+// }
 
-    if need_mutation {
-        alt.to_mut().push_str(", second text");
+//Cow functions
+//read-only
+fn read_log<T>(log: Cow<T>)
+where
+    T: std::fmt::Display + ToOwned + ?Sized,
+    T::Owned: std::fmt::Display,
+{
+    println!("{}", log);
+}
+
+//might mutate
+fn read_input(input: &mut Cow<str>) {
+    if input.contains("change") {
+        *input.to_mut() = String::from("Update");
+        input.to_mut().push_str(", OK");
+    }
+    println!("{}", input);
+}
+
+//flexible config struct
+#[derive(Debug)]
+struct ModuleConfig<'a> {
+    name: Cow<'a, str>,
+    mission: Cow<'a, str>,
+}
+
+impl<'a> ModuleConfig<'a> {
+    fn default_config() -> Self {
+        Self {
+            name: Cow::Borrowed("Stars"),
+            mission: Cow::Borrowed("Mars"),
+        }
+    }
+
+    fn dyn_config(name: String, mission: String) -> Self {
+        Self {
+            // name: String::from(name).into(),
+            name: Cow::Owned(name),
+            mission: Cow::Owned(mission),
+        }
     }
 }

@@ -11,9 +11,8 @@ use std::thread;
 // Mutex: take care about deadlock when an operation needs to lock two resources, and two threads have locked each other these resources
 //they can wait each other forever
 
-//Use Mutex only if you need to change the date, otherwise an Arc is enough
+//Use Mutex only if you need to change the data, otherwise an Arc is enough
 
-//Replace Mutex by RwLock if you can data reader be able to read at the same time.
 //Mutex: one reader at a time
 //RwLock: x reader at a time, but locked regarding the writer
 fn main() {
