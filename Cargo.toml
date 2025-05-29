@@ -177,6 +177,7 @@ bin = [
     { name = "threads2_sol", path = "solutions/20_threads/threads2.rs" },
     { name = "threads3", path = "exercises/20_threads/threads3.rs" },
     { name = "threads3_sol", path = "solutions/20_threads/threads3.rs" },
+    { name = "ex_threads", path = "exercises/20_threads/ex_threads.rs" },
     { name = "macros1", path = "exercises/21_macros/macros1.rs" },
     { name = "macros1_sol", path = "solutions/21_macros/macros1.rs" },
     { name = "macros2", path = "exercises/21_macros/macros2.rs" },
