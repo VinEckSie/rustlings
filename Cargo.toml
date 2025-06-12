@@ -200,6 +200,7 @@ bin = [
     { name = "from_into", path = "exercises/23_conversions/from_into.rs" },
     { name = "from_into_sol", path = "solutions/23_conversions/from_into.rs" },
     { name = "from_str", path = "exercises/23_conversions/from_str.rs" },
+    { name = "ex_conversion", path = "exercises/23_conversions/ex_conversion.rs" },
     { name = "from_str_sol", path = "solutions/23_conversions/from_str.rs" },
     { name = "try_from_into", path = "exercises/23_conversions/try_from_into.rs" },
     { name = "try_from_into_sol", path = "solutions/23_conversions/try_from_into.rs" },
@@ -240,3 +241,7 @@ mem_forget = "deny"
 disallowed_methods = "allow"
 
 [dependencies]
+
+
+[alias]
+check_all = "run && test"

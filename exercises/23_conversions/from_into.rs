@@ -20,6 +20,15 @@ impl Default for Person {
     }
 }
 
+impl Person {
+    fn new(name: &str, age: u8) -> Self {
+        Self {
+            name: name.to_string(),
+            age,
+        }
+    }
+}
+
 // TODO: Complete this `From` implementation to be able to parse a `Person`
 // out of a string in the form of "Mark,20".
 // Note that you'll need to parse the age component into a `u8` with something
@@ -34,7 +43,26 @@ impl Default for Person {
 // 5. Parse the second element from the split operation into a `u8` as the age.
 // 6. If parsing the age fails, return the default of `Person`.
 impl From<&str> for Person {
-    fn from(s: &str) -> Self {}
+    fn from(data: &str) -> Self {
+        let data: Vec<&str> = data.splitn(2, ',').collect();
+
+        if data.len() != 2 {
+            return Person::default();
+        }
+
+        let name = data[0].trim();
+        let age = data[1].trim();
+
+        if name.is_empty() {
+            return Person::default();
+        }
+
+        if let Ok(age) = age.parse::<u8>() {
+            Person::new(name, age)
+        } else {
+            Person::default()
+        }
+    }
 }
 
 fn main() {
