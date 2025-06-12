@@ -22,11 +22,19 @@ fn main() {
     let user = "test".to_string();
     let guest = String::from("guest");
 
-    //FromStr
+    //From
     // open_file("fake path").unwrap();
+
+    //FromStr
+    let expected = Ok(Point { x: 3, y: 5 });
+
+    assert_eq!(Point::from_str("(3,5)"), expected);
+    assert_eq!("(3,5)".parse(), expected);
+    assert_eq!("(3,5)".parse::<Point>(), expected);
+    assert!(Point::from_str("(44 5)").is_err());
 }
 
-//FromStr
+//From
 #[derive(Debug)]
 enum CusError {
     IoError(io::Error),
@@ -50,4 +58,34 @@ fn open_file(file: &str) -> Result<i32, CusError> {
     let content: i32 = file.trim().parse()?;
 
     Ok(content)
+}
+
+//FromStr
+#[derive(Debug, PartialEq)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+#[derive(Debug, Eq, PartialEq)]
+struct ParseIntError;
+
+impl FromStr for Point {
+    type Err = ParseIntError;
+
+    fn from_str(data: &str) -> Result<Point, ParseIntError> {
+        let (x, y) = data
+            .strip_prefix('(')
+            .and_then(|data| data.strip_suffix(')'))
+            .and_then(|data| data.split_once(','))
+            .ok_or(ParseIntError)?;
+
+        let x_coords = x.parse::<i32>().map_err(|_| ParseIntError)?;
+        let y_coords = y.parse::<i32>().map_err(|_| ParseIntError)?;
+
+        Ok(Point {
+            x: x_coords,
+            y: y_coords,
+        })
+    }
 }
