@@ -4,6 +4,9 @@
 // type itself. You can read more about it in the documentation:
 // https://doc.rust-lang.org/std/convert/trait.TryFrom.html
 
+// The From trait is intended for perfect conversions, so the TryFrom trait informs the programmer when a type
+// conversion could go bad and lets them decide how to handle it.
+
 #![allow(clippy::useless_vec)]
 use std::convert::{TryFrom, TryInto};
 
@@ -28,14 +31,34 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
 
-    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {}
+    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let red = Self::try_from_i16(tuple.0)?;
+        let green = Self::try_from_i16(tuple.1)?;
+        let blue = Self::try_from_i16(tuple.2)?;
+
+        Ok(Color { red, green, blue })
+    }
+}
+
+impl Color {
+    fn try_from_i16(val: i16) -> Result<u8, IntoColorError> {
+        u8::try_from(val).map_err(|_| IntoColorError::IntConversion)
+    }
 }
 
 // TODO: Array implementation.
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
 
-    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {}
+    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let [r, g, b] = arr;
+
+        let red = Self::try_from_i16(r).map_err(|_| IntoColorError::IntConversion)?;
+        let green = Self::try_from_i16(g).map_err(|_| IntoColorError::IntConversion)?;
+        let blue = Self::try_from_i16(b).map_err(|_| IntoColorError::IntConversion)?;
+
+        Ok(Color { red, green, blue })
+    }
 }
 
 // TODO: Slice implementation.
@@ -43,7 +66,15 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
 
-    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {}
+    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        let [r, g, b]: [i16; 3] = slice.try_into().map_err(|_| IntoColorError::BadLen)?;
+
+        let red = Self::try_from_i16(r).map_err(|_| IntoColorError::IntConversion)?;
+        let green = Self::try_from_i16(g).map_err(|_| IntoColorError::IntConversion)?;
+        let blue = Self::try_from_i16(b).map_err(|_| IntoColorError::IntConversion)?;
+
+        Ok(Color { red, green, blue })
+    }
 }
 
 fn main() {

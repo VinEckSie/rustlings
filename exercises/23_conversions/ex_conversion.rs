@@ -14,6 +14,11 @@ fn main() {
     // When you implement From<SomeError> for your own error type, you automatically enable the ? operator to convert SomeError
     // into your error type, thanks to the From/Into machinery used by ?.
 
+    // What does the ? operator do?
+    // It unwraps a Result or Option, but propagates the error (or None) if it fails, instead of panicking.
+
+    //if you deal with position instead of characters (number slice vs str slice), use TRY_INTO, instead of split
+
     let str_number = "345";
     let number = i32::from_str(str_number);
     println!("{:?}", number);
